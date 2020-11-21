@@ -36,4 +36,8 @@ There is a game field consisting of hex fields containing blocks. The player nee
 - Performant
 - Graphical quality is irrelevant
 
-![](RackMultipart20201121-4-1ozx9de_html_89ec818b3137dacf.jpg) ![](RackMultipart20201121-4-1ozx9de_html_9efd953a6c59dea7.png)
+## Examples
+
+| ![Caveman Story](https://user-images.githubusercontent.com/4397989/99886820-ddc26b00-2c3f-11eb-8961-6adce0d6cd68.jpg) | ![Poko Pang](https://user-images.githubusercontent.com/4397989/99886821-df8c2e80-2c3f-11eb-913c-714258de75de.png) |
+| :-------------------------------------------------------------------------------------------------------------------: | :---------------------------------------------------------------------------------------------------------------: |
+|                                                    _Caveman Story_                                                    |                                                    _Poko Pang_                                                    |
