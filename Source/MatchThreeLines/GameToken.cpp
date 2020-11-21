@@ -67,7 +67,7 @@ void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
                 const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
                 if (SelectedToken != nullptr)
                 {
-                    PlayerState->GetSelectedTokens().AddUnique(SelectedToken);
+                    PlayerState->AddTokenToSelected(SelectedToken);
                 }
                 else
                 {
@@ -107,7 +107,7 @@ void AGameToken::OnMouseClick(AActor* TouchedActor, FKey ButtonPressed)
         const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
         if (SelectedToken != nullptr)
         {
-            PlayerState->GetSelectedTokens().AddUnique(SelectedToken);
+            PlayerState->AddTokenToSelected(SelectedToken);
         }
         else
         {

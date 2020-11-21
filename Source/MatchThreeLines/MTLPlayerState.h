@@ -35,6 +35,8 @@ public:
 
     void SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken);
 
+    void AddTokenToSelected(const AGameToken* Token);
+
     void EndTurn();
 };
 
@@ -54,4 +56,9 @@ FORCEINLINE void AMTLPlayerState::SetSelectionStarted(const bool bSelectionStart
 FORCEINLINE void AMTLPlayerState::SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken)
 {
     CurrentlyHoveredGameToken = HoveredGameToken;
+}
+
+FORCEINLINE void AMTLPlayerState::AddTokenToSelected(const AGameToken* Token)
+{
+    SelectedTokens.AddUnique(Token);
 }
