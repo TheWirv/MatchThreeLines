@@ -19,17 +19,19 @@ AGameToken::AGameToken()
     Mesh->SetupAttachment(RootComponent);
     // Get the actual mesh asset
     static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(
-        TEXT("StaticMesh'/Game/Meshes/SM_GameToken.SM_GameToken'"));
-    UStaticMesh* GameTokenMesh = MeshAsset.Object;
-    if (GameTokenMesh != nullptr)
+        TEXT("StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+    UStaticMesh* PlaneMesh = MeshAsset.Object;
+    if (PlaneMesh != nullptr)
     {
         static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(
             TEXT("Material'/Game/Materials/M_GameToken.M_GameToken'"));
         Material = MaterialAsset.Object;
         if (Material != nullptr)
         {
-            Mesh->SetStaticMesh(GameTokenMesh);
+            Mesh->SetStaticMesh(PlaneMesh);
             Mesh->SetMaterial(0, Material);
+            const FRotator Rotation(0.f, 90.f, 90.f);
+            Mesh->SetRelativeRotation(Rotation);
             this->OnBeginCursorOver.AddDynamic(this, &AGameToken::OnBeginMouseOver);
             this->OnEndCursorOver.AddDynamic(this, &AGameToken::OnEndMouseOver);
             this->OnClicked.AddDynamic(this, &AGameToken::OnMouseClick);
@@ -65,7 +67,7 @@ void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
                 const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
                 if (SelectedToken != nullptr)
                 {
-                    PlayerState->AddSelectedToken(SelectedToken);
+                    PlayerState->GetSelectedTokens().AddUnique(SelectedToken);
                 }
                 else
                 {
@@ -105,7 +107,7 @@ void AGameToken::OnMouseClick(AActor* TouchedActor, FKey ButtonPressed)
         const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
         if (SelectedToken != nullptr)
         {
-            PlayerState->AddSelectedToken(SelectedToken);
+            PlayerState->GetSelectedTokens().AddUnique(SelectedToken);
         }
         else
         {
@@ -125,8 +127,7 @@ void AGameToken::OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed)
 
     if (PlayerState != nullptr)
     {
-        PlayerState->SetSelectionStarted(false);
-        PlayerState->ResetSelectedTokens();
+        PlayerState->EndTurn();
     }
     else
     {
@@ -164,7 +165,7 @@ void AGameToken::AssignMaterialInstanceToMesh()
     if (Material != nullptr)
     {
         MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
-        MaterialInstance->SetVectorParameterValue("BaseColor", GetMaterialInstanceColorVector());
+        MaterialInstance->SetVectorParameterValue("BaseColor", GetMaterialInstanceColor());
         Mesh->SetMaterial(0, MaterialInstance);
     }
     else
@@ -174,34 +175,11 @@ void AGameToken::AssignMaterialInstanceToMesh()
     }
 }
 
-FVector AGameToken::GetMaterialInstanceColorVector() const
-{
-    FColor MaterialInstanceColor;
-    switch (TokenType)
-    {
-    case Red:
-        MaterialInstanceColor = FColor::Red;
-        break;
-    case Blue:
-        MaterialInstanceColor = FColor::Blue;
-        break;
-    case Green:
-        MaterialInstanceColor = FColor::Green;
-        break;
-    case Yellow:
-        MaterialInstanceColor = FColor::Yellow;
-        break;
-    default:
-        MaterialInstanceColor = FColor::White;
-    }
-
-    return FVector(MaterialInstanceColor.R, MaterialInstanceColor.G, MaterialInstanceColor.B);
-}
-
-void AGameToken::Init(const int32 Row, const int32 Column)
+void AGameToken::Init(const int32 Row, const int32 Column, const FVector InitialLocation)
 {
     Index.Row = Row;
     Index.Column = Column;
+    Location = InitialLocation;
 }
 
 // Called when the game starts or when spawned
@@ -229,12 +207,5 @@ void AGameToken::Tick(float DeltaTime)
                                          TEXT("Couldn't get PlayerState!"));
     }
 
-    if (bIsSelected)
-    {
-        MaterialInstance->SetScalarParameterValue("IsSelected", 1);
-    }
-    else
-    {
-        MaterialInstance->SetScalarParameterValue("IsSelected", 0);
-    }
+    MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
 }

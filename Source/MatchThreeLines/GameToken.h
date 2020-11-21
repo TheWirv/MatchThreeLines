@@ -41,9 +41,9 @@ public:
 
     void AssignMaterialInstanceToMesh();
 
-    FVector GetMaterialInstanceColorVector() const;
+    FColor GetMaterialInstanceColor() const;
 
-    void Init(const int32 Row, const int32 Column);
+    void Init(const int32 Row, const int32 Column, const FVector InitialLocation);
 
 protected:
     // Called when the game starts or when spawned
@@ -67,3 +67,20 @@ public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 };
+
+FORCEINLINE FColor AGameToken::GetMaterialInstanceColor() const
+{
+    switch (TokenType)
+    {
+    case Red:
+        return FColor::Red;
+    case Blue:
+        return FColor::Blue;
+    case Green:
+        return FColor::Green;
+    case Yellow:
+        return FColor::Yellow;
+    default:
+        return FColor::White;
+    }
+}

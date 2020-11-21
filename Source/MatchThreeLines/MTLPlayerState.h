@@ -31,34 +31,27 @@ public:
 
     TArray<const AGameToken*> GetSelectedTokens() const;
 
-    void SetSelectionStarted(bool bHasSelectionStarted);
+    void SetSelectionStarted(bool bSelectionStarted);
 
     void SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken);
 
-    void AddSelectedToken(const AGameToken* GameToken);
-
-    void ResetSelectedTokens();
+    void EndTurn();
 };
 
-FORCEINLINE bool AMTLPlayerState::HasSelectionStarted() const { return bHasSelectionStarted; };
+// Getters
+FORCEINLINE bool AMTLPlayerState::HasSelectionStarted() const { return bHasSelectionStarted; }
 
 FORCEINLINE AGameToken* AMTLPlayerState::GetCurrentlyHoveredGameToken() const { return CurrentlyHoveredGameToken; }
 
-FORCEINLINE TArray<const AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; };
+FORCEINLINE TArray<const AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
 
-FORCEINLINE void AMTLPlayerState::SetSelectionStarted(const bool _bHasSelectionStarted)
+// Setters
+FORCEINLINE void AMTLPlayerState::SetSelectionStarted(const bool bSelectionStarted)
 {
-    bHasSelectionStarted = _bHasSelectionStarted;
+    this->bHasSelectionStarted = bSelectionStarted;
 }
 
 FORCEINLINE void AMTLPlayerState::SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken)
 {
     CurrentlyHoveredGameToken = HoveredGameToken;
 }
-
-FORCEINLINE void AMTLPlayerState::AddSelectedToken(const AGameToken* GameToken)
-{
-    SelectedTokens.AddUnique(GameToken);
-};
-
-FORCEINLINE void AMTLPlayerState::ResetSelectedTokens() { SelectedTokens.Empty(); };

@@ -15,6 +15,13 @@ class MATCHTHREELINES_API AMTLGameMode : public AGameModeBase
 {
     GENERATED_BODY()
 
+    int32 MaxAmountOfTurns;
+
 public:
     AMTLGameMode();
+
+    int32 GetMaxAmountOfTurns() const;
 };
+
+// Getters
+FORCEINLINE int32 AMTLGameMode::GetMaxAmountOfTurns() const { return MaxAmountOfTurns; }

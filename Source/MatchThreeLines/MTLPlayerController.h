@@ -14,16 +14,6 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
 {
     GENERATED_BODY()
 
-    /**
-    * MouseDown event
-    */
-    void OnMouseDown();
-
-    /**
-    * MouseUp event
-    */
-    void OnMouseUp();
-
 public:
     AMTLPlayerController();
 

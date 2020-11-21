@@ -15,4 +15,7 @@ AMTLGameMode::AMTLGameMode()
 
     // Set up custom PlayerState
     PlayerStateClass = AMTLPlayerState::StaticClass();
+
+    // Set maximum amount of turns
+    MaxAmountOfTurns = 15;
 }
