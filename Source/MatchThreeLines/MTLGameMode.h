@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+
 #include "MTLGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class MATCHTHREELINES_API AMTLGameMode : public AGameModeBase

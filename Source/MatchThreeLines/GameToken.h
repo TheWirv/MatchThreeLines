@@ -6,6 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "GameToken.generated.h"
 
+struct FIndex
+{
+    int32 Row;
+    int32 Column;
+};
+
 UCLASS()
 class MATCHTHREELINES_API AGameToken : public AActor
 {
@@ -14,12 +20,11 @@ class MATCHTHREELINES_API AGameToken : public AActor
     bool bIsSelected;
 
     FVector Location;
-    TArray<int32> Index;
+    FIndex Index;
 
 public:
     // Sets default values for this actor's properties
     AGameToken();
-
 
     UPROPERTY(VisibleAnywhere)
     class UStaticMeshComponent* Mesh;
@@ -38,7 +43,7 @@ public:
 
     FVector GetMaterialInstanceColorVector() const;
 
-    void Init(TArray<int32> InIndex);
+    void Init(const int32 Row, const int32 Column);
 
 protected:
     // Called when the game starts or when spawned
@@ -56,39 +61,9 @@ protected:
     UFUNCTION()
     void OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed);
 
-    bool IsNeighbor(const AGameToken* Other);
+    bool IsNeighbor(const AGameToken* Other) const;
 
 public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 };
-
-FORCEINLINE bool AGameToken::IsNeighbor(const AGameToken* Other)
-{
-    if (Other->Index[0] == Index[0])
-    {
-        if (Other->Index[1] - 1 == Index[1] || Other->Index[1] + 1 == Index[1])
-        {
-            // Same row, left/right
-            return true;
-        }
-    }
-    else if (Other->Index[1] == Index[1])
-    {
-        if (Other->Index[0] - 1 == Index[0] || Other->Index[0] + 1 == Index[0])
-        {
-            // Same column, above/below
-            return true;
-        }
-    }
-    else if (Other->Index[0] + 1 == Index[0])
-    {
-        if (Other->Index[1] - 1 == Index[1] || Other->Index[1] + 1 == Index[1])
-        {
-            // Since these are hexgons, these are bottom left/right
-            return true;
-        }
-    }
-
-    return false;
-}

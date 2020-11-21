@@ -9,7 +9,7 @@
 #include "MTLPlayerState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
@@ -41,7 +41,6 @@ public:
 };
 
 FORCEINLINE bool AMTLPlayerState::HasSelectionStarted() const { return bHasSelectionStarted; };
-
 
 FORCEINLINE AGameToken* AMTLPlayerState::GetCurrentlyHoveredGameToken() const { return CurrentlyHoveredGameToken; }
 

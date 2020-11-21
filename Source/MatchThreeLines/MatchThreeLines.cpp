@@ -3,4 +3,4 @@
 #include "MatchThreeLines.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, MatchThreeLines, "MatchThreeLines" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, MatchThreeLines, "MatchThreeLines");

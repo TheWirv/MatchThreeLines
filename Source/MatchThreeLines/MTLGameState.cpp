@@ -20,7 +20,7 @@ void AMTLGameState::SpawnTokens()
                     UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AGameToken::StaticClass(), Transform));
                 if (SpawnedGameToken != nullptr)
                 {
-                    SpawnedGameToken->Init({i, j});
+                    SpawnedGameToken->Init(i, j);
                     UGameplayStatics::FinishSpawningActor(SpawnedGameToken, Transform);
                     Row[j] = SpawnedGameToken;
                 }

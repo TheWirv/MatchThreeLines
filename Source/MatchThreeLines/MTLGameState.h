@@ -10,7 +10,7 @@
 #include "MTLGameState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class MATCHTHREELINES_API AMTLGameState : public AGameStateBase

@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GameToken.h"
 #include "MTLPlayerState.h"
 
@@ -13,7 +12,6 @@ AGameToken::AGameToken()
     PrimaryActorTick.bCanEverTick = true;
 
     bIsSelected = false;
-    Index.SetNum(2);
 
     // Set up StaticMesh component
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
@@ -136,6 +134,31 @@ void AGameToken::OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed)
     }
 }
 
+bool AGameToken::IsNeighbor(const AGameToken* Other) const
+{
+    // Column index to left/right is the same
+    if (Index.Column - 1 == Other->Index.Column || Index.Column + 1 == Other->Index.Column)
+    {
+        // Same row
+        if (Index.Row == Other->Index.Row ||
+            // Check the next row for tokens with even column indeces
+            ((Index.Column % 2 == 0) && (Index.Row - 1 == Other->Index.Row)) ||
+            // Check the previous row for tokens with odd column indeces
+            ((Index.Column % 2 == 1) && (Index.Row + 1 == Other->Index.Row)))
+        {
+            return true;
+        }
+    }
+    else if ((Index.Column == Other->Index.Column) && (Index.Row - 1 == Other->Index.Row || Index.Row + 1 == Other->
+        Index.Row))
+    {
+        // Column index is the same and the row index points either to the next or previous one
+        return true;
+    }
+
+    return false;
+}
+
 void AGameToken::AssignMaterialInstanceToMesh()
 {
     if (Material != nullptr)
@@ -172,13 +195,13 @@ FVector AGameToken::GetMaterialInstanceColorVector() const
         MaterialInstanceColor = FColor::White;
     }
 
-
     return FVector(MaterialInstanceColor.R, MaterialInstanceColor.G, MaterialInstanceColor.B);
 }
 
-void AGameToken::Init(const TArray<int32> InIndex)
+void AGameToken::Init(const int32 Row, const int32 Column)
 {
-    Index = InIndex;
+    Index.Row = Row;
+    Index.Column = Column;
 }
 
 // Called when the game starts or when spawned
