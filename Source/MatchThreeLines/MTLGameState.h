@@ -9,6 +9,21 @@
 #include "MTLGameMode.h"
 #include "MTLGameState.generated.h"
 
+struct FFallingGameToken
+{
+    AGameToken* Token; // Pointer to the actual token
+    int32 Amount; // How many units is this token about to fall
+    
+    FFallingGameToken(AGameToken* InToken, const int32 InitialAmount): Token(InToken), Amount(InitialAmount)
+    {
+    }
+
+    bool operator==(const FFallingGameToken& OtherFallingToken) const
+    {
+        return Token->GetIndex() == OtherFallingToken.Token->GetIndex();
+    }
+};
+
 /**
  *
  */
