@@ -22,8 +22,7 @@ void AMTLGameState::InitPlayingField(const AMTLGameMode* GameMode)
             const bool bIsEvenCol = i % 2 == 0;
             const float y = HORIZONTAL_OFFSET * i + 500;
             const float z = (VERTICAL_OFFSET * j + (bIsEvenCol ? 0.f : 43.25f)) + 430;
-            const FVector Location(0.f, y, z);
-            PlayingFieldLocations[i][j] = Location;
+            PlayingFieldLocations[i][j] = FVector(0.f, y, z);
         }
     }
 
@@ -44,7 +43,7 @@ void AMTLGameState::SpawnTokens()
                     UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AGameToken::StaticClass(), Transform));
                 if (SpawnedGameToken != nullptr)
                 {
-                    SpawnedGameToken->Init(i, j, PlayingFieldLocations[i][j]);
+                    SpawnedGameToken->Init(i, j, PlayingFieldLocations[i][j].Z);
                     UGameplayStatics::FinishSpawningActor(SpawnedGameToken, Transform);
                     Column[j] = SpawnedGameToken;
                 }
@@ -85,6 +84,23 @@ bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
         {
             // return false if this token could not be destroyed.
             return false;
+        }
+
+        const int32 ColumnIndex = Token->GetIndex().X;
+        const int32 RowIndex = Token->GetIndex().Y;
+        const TArray<AGameToken*> CurrentColumn = PlayingField[ColumnIndex];
+        for (int32 i = RowIndex + 1; i < CurrentColumn.Num(); i++)
+        {
+            if (!SelectedTokens.Contains(CurrentColumn[i]))
+            {
+                AGameToken* CurrentGameToken = PlayingField[ColumnIndex][i];
+                const float NewLocationZ = CurrentGameToken->GetLocationZ();
+                FIntPoint CurrentIndex = CurrentGameToken->GetIndex();
+                CurrentIndex.Y = CurrentIndex.Y - 1; 
+                CurrentGameToken->SetLocationZ(NewLocationZ - VERTICAL_OFFSET);
+                CurrentGameToken->SetIndex(CurrentIndex);
+                CurrentGameToken->SetIsFallingDown(true);
+            }
         }
     }
 

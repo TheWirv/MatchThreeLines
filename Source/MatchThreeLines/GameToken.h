@@ -24,10 +24,10 @@ class MATCHTHREELINES_API AGameToken : public AActor
     GENERATED_BODY()
 
     bool bIsSelected;
+    bool bIsFallingDown;
 
-    FVector Location;
+    float LocationZ;
     FIntPoint Index;
-
     ETokenType TokenType;
 
     void AssignMaterialInstanceToMesh();
@@ -67,11 +67,19 @@ public:
     UPROPERTY(VisibleAnywhere)
     class UMaterialInstanceDynamic* MaterialInstance;
 
-    void Init(const int32 Column, const int32 Row, const FVector InitialLocation);
+    void Init(const int32 Column, const int32 Row, const float InitialLocationZ);
 
     bool IsNeighbor(const AGameToken* Other) const;
 
+    float GetLocationZ() const;
+
     FIntPoint GetIndex() const;
+
+    void SetIsFallingDown(const bool InIsFallingDown);
+
+    void SetLocationZ(const float NewLocationZ);
+
+    void SetIndex(const FIntPoint NewIndex);
 
     bool IsOfSameType(const AGameToken* OtherToken) const;
 
@@ -98,8 +106,19 @@ public:
     virtual void Tick(float DeltaTime) override;
 };
 
+// Getters
+FORCEINLINE float AGameToken::GetLocationZ() const { return LocationZ; };
+
 FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };
 
+// Setters
+FORCEINLINE void AGameToken::SetIsFallingDown(const bool InIsFallingDown) { bIsFallingDown = InIsFallingDown; };
+
+FORCEINLINE void AGameToken::SetLocationZ(const float NewLocationZ) { LocationZ = NewLocationZ; };
+
+FORCEINLINE void AGameToken::SetIndex(const FIntPoint NewIndex) { Index = NewIndex; };
+
+// Other inline functions
 FORCEINLINE bool AGameToken::IsOfSameType(const AGameToken* OtherToken) const
 {
     return TokenType == OtherToken->TokenType;
