@@ -9,20 +9,6 @@
 #define VERTICAL_OFFSET 86.5f
 #define HORIZONTAL_OFFSET 75.f
 
-struct FIndex
-{
-    FIndex(): Column(0), Row(0)
-    {
-    }
-
-    FIndex(const int32 InColumn, const int32 InRow): Column(InColumn), Row(InRow)
-    {
-    }
-
-    int32 Column;
-    int32 Row;
-};
-
 enum ETokenType
 {
     Red,
@@ -40,7 +26,7 @@ class MATCHTHREELINES_API AGameToken : public AActor
     bool bIsSelected;
 
     FVector Location;
-    FIndex Index;
+    FIntPoint Index;
 
     ETokenType TokenType;
 
@@ -83,7 +69,7 @@ public:
 
     void Init(const int32 Column, const int32 Row, const FVector InitialLocation);
 
-    FIndex GetIndex() const;
+    FIntPoint GetIndex() const;
 
     /**
     * Equality operator.
@@ -93,7 +79,7 @@ public:
     */
     bool operator==(const AGameToken* OtherToken) const
     {
-        return Index.Row == OtherToken->Index.Row && Index.Column == OtherToken->Index.Column;
+        return Index.X == OtherToken->Index.X && Index.Y == OtherToken->Index.Y;
     }
 
 protected:
@@ -106,12 +92,6 @@ protected:
     UFUNCTION()
     void OnEndMouseOver(AActor* TouchedActor);
 
-    UFUNCTION()
-    void OnMouseClick(AActor* TouchedActor, FKey ButtonPressed);
-
-    UFUNCTION()
-    void OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed);
-
     bool IsNeighbor(const AGameToken* Other) const;
 
 public:
@@ -119,4 +99,4 @@ public:
     virtual void Tick(float DeltaTime) override;
 };
 
-FORCEINLINE FIndex AGameToken::GetIndex() const { return Index; };
+FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };

@@ -49,8 +49,6 @@ AGameToken::AGameToken()
             Mesh->SetRelativeRotation(Rotation);
             this->OnBeginCursorOver.AddDynamic(this, &AGameToken::OnBeginMouseOver);
             this->OnEndCursorOver.AddDynamic(this, &AGameToken::OnEndMouseOver);
-            this->OnClicked.AddDynamic(this, &AGameToken::OnMouseClick);
-            this->OnReleased.AddDynamic(this, &AGameToken::OnMouseRelease);
         }
         else
         {
@@ -68,7 +66,7 @@ AGameToken::AGameToken()
 
 void AGameToken::Init(const int32 Column, const int32 Row, const FVector InitialLocation)
 {
-    Index = FIndex(Column, Row);
+    Index = FIntPoint(Column, Row);
     Location = InitialLocation;
 }
 
@@ -79,8 +77,8 @@ void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
 
     if (PlayerState != nullptr)
     {
-        PlayerState->SetCurrentlyHoveredGameToken(this);
-        if (PlayerState->HasSelectionStarted())
+        PlayerState->SetHoveredOverGameToken(this);
+        if (PlayerState->IsSelecting())
         {
             const AGameToken* LastToken = Cast<AGameToken>(PlayerState->GetSelectedTokens().Last());
             if (IsNeighbor(LastToken) && LastToken->TokenType == TokenType)
@@ -92,7 +90,8 @@ void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
                 }
                 else
                 {
-                    GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't add Token!"));
+                    GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red,
+                                                     TEXT("Couldn't cast touched actor to GameToken!"));
                 }
             }
         }
@@ -109,46 +108,7 @@ void AGameToken::OnEndMouseOver(AActor* TouchedActor)
 
     if (PlayerState != nullptr)
     {
-        PlayerState->SetCurrentlyHoveredGameToken(nullptr);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
-void AGameToken::OnMouseClick(AActor* TouchedActor, FKey ButtonPressed)
-{
-    bIsSelected = true;
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->SetSelectionStarted(true);
-        AGameToken* SelectedToken = Cast<AGameToken>(TouchedActor);
-        if (SelectedToken != nullptr)
-        {
-            PlayerState->AddTokenToSelected(SelectedToken);
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't add Token!"));
-        }
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
-void AGameToken::OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed)
-{
-    bIsSelected = false;
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->EndTurn();
+        PlayerState->SetHoveredOverGameToken(nullptr);
     }
     else
     {
@@ -159,20 +119,20 @@ void AGameToken::OnMouseRelease(AActor* TouchedActor, FKey ButtonPressed)
 bool AGameToken::IsNeighbor(const AGameToken* Other) const
 {
     // Column index to left/right is the same
-    if (Index.Column - 1 == Other->Index.Column || Index.Column + 1 == Other->Index.Column)
+    if (Index.X - 1 == Other->Index.X || Index.X + 1 == Other->Index.X)
     {
         // Same row
-        if (Index.Row == Other->Index.Row ||
+        if (Index.Y == Other->Index.Y ||
             // Check the next row for tokens with even column indeces
-            ((Index.Column % 2 == 0) && (Index.Row - 1 == Other->Index.Row)) ||
+            ((Index.X % 2 == 0) && (Index.Y - 1 == Other->Index.Y)) ||
             // Check the previous row for tokens with odd column indeces
-            ((Index.Column % 2 == 1) && (Index.Row + 1 == Other->Index.Row)))
+            ((Index.X % 2 == 1) && (Index.Y + 1 == Other->Index.Y)))
         {
             return true;
         }
     }
-    else if ((Index.Column == Other->Index.Column) && (Index.Row - 1 == Other->Index.Row || Index.Row + 1 == Other->
-        Index.Row))
+    else if ((Index.X == Other->Index.X) && (Index.Y - 1 == Other->Index.Y || Index.Y + 1 == Other->
+        Index.Y))
     {
         // Column index is the same and the row index points either to the next or previous one
         return true;

@@ -7,7 +7,7 @@
 // public functions
 void AMTLPlayerState::EndTurn()
 {
-    SetSelectionStarted(false);
+    SetIsSelecting(false);
     if (SelectedTokens.Num() >= 3)
     {
         AMTLGameState* GameState = GetWorld()->GetGameState<AMTLGameState>();

@@ -16,24 +16,24 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
 {
     GENERATED_BODY()
 
-    bool bHasSelectionStarted;
+    bool bIsSelecting;
 
     UPROPERTY()
-    AGameToken* CurrentlyHoveredGameToken;
+    AGameToken* HoveredOverGameToken;
 
     UPROPERTY()
     TArray<AGameToken*> SelectedTokens;
 
 public:
-    bool HasSelectionStarted() const;
+    bool IsSelecting() const;
 
-    AGameToken* GetCurrentlyHoveredGameToken() const;
+    AGameToken* GetHoveredOverGameToken() const;
 
     TArray<AGameToken*> GetSelectedTokens() const;
 
-    void SetSelectionStarted(bool bSelectionStarted);
+    void SetIsSelecting(const bool InIsSelecting);
 
-    void SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken);
+    void SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken);
 
     void AddTokenToSelected(AGameToken* Token);
 
@@ -41,21 +41,18 @@ public:
 };
 
 // Getters
-FORCEINLINE bool AMTLPlayerState::HasSelectionStarted() const { return bHasSelectionStarted; }
+FORCEINLINE bool AMTLPlayerState::IsSelecting() const { return bIsSelecting; }
 
-FORCEINLINE AGameToken* AMTLPlayerState::GetCurrentlyHoveredGameToken() const { return CurrentlyHoveredGameToken; }
+FORCEINLINE AGameToken* AMTLPlayerState::GetHoveredOverGameToken() const { return HoveredOverGameToken; }
 
 FORCEINLINE TArray<AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
 
 // Setters
-FORCEINLINE void AMTLPlayerState::SetSelectionStarted(const bool bSelectionStarted)
-{
-    this->bHasSelectionStarted = bSelectionStarted;
-}
+FORCEINLINE void AMTLPlayerState::SetIsSelecting(const bool InIsSelecting) { bIsSelecting = InIsSelecting; }
 
-FORCEINLINE void AMTLPlayerState::SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken)
+FORCEINLINE void AMTLPlayerState::SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken)
 {
-    CurrentlyHoveredGameToken = HoveredGameToken;
+    HoveredOverGameToken = InHoveredOverGameToken;
 }
 
 FORCEINLINE void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
