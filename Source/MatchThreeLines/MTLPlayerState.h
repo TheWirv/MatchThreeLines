@@ -54,8 +54,3 @@ FORCEINLINE void AMTLPlayerState::SetHoveredOverGameToken(AGameToken* InHoveredO
 {
     HoveredOverGameToken = InHoveredOverGameToken;
 }
-
-FORCEINLINE void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
-{
-    SelectedTokens.AddUnique(Token);
-}

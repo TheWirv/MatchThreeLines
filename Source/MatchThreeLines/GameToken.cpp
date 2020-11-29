@@ -70,52 +70,6 @@ void AGameToken::Init(const int32 Column, const int32 Row, const FVector Initial
     Location = InitialLocation;
 }
 
-// protected functions
-void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
-{
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->SetHoveredOverGameToken(this);
-        if (PlayerState->IsSelecting())
-        {
-            const AGameToken* LastToken = Cast<AGameToken>(PlayerState->GetSelectedTokens().Last());
-            if (IsNeighbor(LastToken) && LastToken->TokenType == TokenType)
-            {
-                AGameToken* SelectedToken = Cast<AGameToken>(TouchedActor);
-                if (SelectedToken != nullptr)
-                {
-                    PlayerState->AddTokenToSelected(SelectedToken);
-                }
-                else
-                {
-                    GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red,
-                                                     TEXT("Couldn't cast touched actor to GameToken!"));
-                }
-            }
-        }
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
-void AGameToken::OnEndMouseOver(AActor* TouchedActor)
-{
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->SetHoveredOverGameToken(nullptr);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
 bool AGameToken::IsNeighbor(const AGameToken* Other) const
 {
     // Column index to left/right is the same
@@ -139,6 +93,39 @@ bool AGameToken::IsNeighbor(const AGameToken* Other) const
     }
 
     return false;
+}
+
+// protected functions
+void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
+{
+    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
+
+    if (PlayerState != nullptr)
+    {
+        PlayerState->SetHoveredOverGameToken(this);
+        if (PlayerState->IsSelecting())
+        {
+            PlayerState->AddTokenToSelected(this);
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
+    }
+}
+
+void AGameToken::OnEndMouseOver(AActor* TouchedActor)
+{
+    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
+
+    if (PlayerState != nullptr)
+    {
+        PlayerState->SetHoveredOverGameToken(nullptr);
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
+    }
 }
 
 // Called when the game starts or when spawned

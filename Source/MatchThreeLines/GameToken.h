@@ -69,18 +69,19 @@ public:
 
     void Init(const int32 Column, const int32 Row, const FVector InitialLocation);
 
+    bool IsNeighbor(const AGameToken* Other) const;
+
     FIntPoint GetIndex() const;
+
+    bool IsOfSameType(const AGameToken* OtherToken) const;
 
     /**
     * Equality operator.
     *
     * @param OtherToken GameToken to compare.
-    * @returns True if this GameToken has the same index as OtherToken. False otherwise.
+    * @returns True if GameToken and OtherToken have the same Index. False otherwise.
     */
-    bool operator==(const AGameToken* OtherToken) const
-    {
-        return Index.X == OtherToken->Index.X && Index.Y == OtherToken->Index.Y;
-    }
+    bool operator==(const AGameToken* OtherToken) const;
 
 protected:
     // Called when the game starts or when spawned
@@ -92,11 +93,16 @@ protected:
     UFUNCTION()
     void OnEndMouseOver(AActor* TouchedActor);
 
-    bool IsNeighbor(const AGameToken* Other) const;
-
 public:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 };
 
 FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };
+
+FORCEINLINE bool AGameToken::IsOfSameType(const AGameToken* OtherToken) const
+{
+    return TokenType == OtherToken->TokenType;
+};
+
+FORCEINLINE bool AGameToken::operator==(const AGameToken* OtherToken) const { return Index == OtherToken->Index; }

@@ -55,19 +55,3 @@ void AMTLPlayerController::SetupInputComponent()
     InputComponent->BindAction("MouseClick", IE_Pressed, this, &AMTLPlayerController::OnMouseClicked);
     InputComponent->BindAction("MouseClick", IE_Released, this, &AMTLPlayerController::OnMouseReleased);
 }
-
-void AMTLPlayerController::Tick(float DeltaSeconds)
-{
-    Super::Tick(DeltaSeconds);
-
-    AMTLPlayerState* MTLPlayerState = GetPlayerState<AMTLPlayerState>();
-    if (MTLPlayerState != nullptr)
-    {
-        const AGameToken* CurrentlyHoveredGameToken = MTLPlayerState->GetHoveredOverGameToken();
-        const bool bHasSelectionStarted = MTLPlayerState->IsSelecting();
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
