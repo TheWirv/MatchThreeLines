@@ -22,20 +22,20 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
     AGameToken* CurrentlyHoveredGameToken;
 
     UPROPERTY()
-    TArray<const AGameToken*> SelectedTokens;
+    TArray<AGameToken*> SelectedTokens;
 
 public:
     bool HasSelectionStarted() const;
 
     AGameToken* GetCurrentlyHoveredGameToken() const;
 
-    TArray<const AGameToken*> GetSelectedTokens() const;
+    TArray<AGameToken*> GetSelectedTokens() const;
 
     void SetSelectionStarted(bool bSelectionStarted);
 
     void SetCurrentlyHoveredGameToken(AGameToken* HoveredGameToken);
 
-    void AddTokenToSelected(const AGameToken* Token);
+    void AddTokenToSelected(AGameToken* Token);
 
     void EndTurn();
 };
@@ -45,7 +45,7 @@ FORCEINLINE bool AMTLPlayerState::HasSelectionStarted() const { return bHasSelec
 
 FORCEINLINE AGameToken* AMTLPlayerState::GetCurrentlyHoveredGameToken() const { return CurrentlyHoveredGameToken; }
 
-FORCEINLINE TArray<const AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
+FORCEINLINE TArray<AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
 
 // Setters
 FORCEINLINE void AMTLPlayerState::SetSelectionStarted(const bool bSelectionStarted)
@@ -58,7 +58,7 @@ FORCEINLINE void AMTLPlayerState::SetCurrentlyHoveredGameToken(AGameToken* Hover
     CurrentlyHoveredGameToken = HoveredGameToken;
 }
 
-FORCEINLINE void AMTLPlayerState::AddTokenToSelected(const AGameToken* Token)
+FORCEINLINE void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
 {
     SelectedTokens.AddUnique(Token);
 }

@@ -2,10 +2,25 @@
 
 #include "GameToken.h"
 #include "MTLPlayerState.h"
-
 #include "MTLGameMode.h"
 
-// Sets default values
+// private functions
+void AGameToken::AssignMaterialInstanceToMesh()
+{
+    if (Material != nullptr)
+    {
+        MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
+        MaterialInstance->SetVectorParameterValue("BaseColor", GetMaterialInstanceColor());
+        Mesh->SetMaterial(0, MaterialInstance);
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red,
+                                         TEXT("Couldn't create MaterialInstance for SM_GameToken!"));
+    }
+}
+
+// public functions
 AGameToken::AGameToken()
 {
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -36,7 +51,6 @@ AGameToken::AGameToken()
             this->OnEndCursorOver.AddDynamic(this, &AGameToken::OnEndMouseOver);
             this->OnClicked.AddDynamic(this, &AGameToken::OnMouseClick);
             this->OnReleased.AddDynamic(this, &AGameToken::OnMouseRelease);
-            // this->OnReleased
         }
         else
         {
@@ -49,9 +63,16 @@ AGameToken::AGameToken()
     }
 
     int32 RandomNumber = FMath::RandRange(Red, White);
-    TokenType = static_cast<ETokenTypes>(RandomNumber);
+    TokenType = static_cast<ETokenType>(RandomNumber);
 }
 
+void AGameToken::Init(const int32 Column, const int32 Row, const FVector InitialLocation)
+{
+    Index = FIndex(Column, Row);
+    Location = InitialLocation;
+}
+
+// protected functions
 void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
 {
     AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
@@ -64,7 +85,7 @@ void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
             const AGameToken* LastToken = Cast<AGameToken>(PlayerState->GetSelectedTokens().Last());
             if (IsNeighbor(LastToken) && LastToken->TokenType == TokenType)
             {
-                const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
+                AGameToken* SelectedToken = Cast<AGameToken>(TouchedActor);
                 if (SelectedToken != nullptr)
                 {
                     PlayerState->AddTokenToSelected(SelectedToken);
@@ -104,7 +125,7 @@ void AGameToken::OnMouseClick(AActor* TouchedActor, FKey ButtonPressed)
     if (PlayerState != nullptr)
     {
         PlayerState->SetSelectionStarted(true);
-        const AGameToken* SelectedToken = Cast<const AGameToken>(TouchedActor);
+        AGameToken* SelectedToken = Cast<AGameToken>(TouchedActor);
         if (SelectedToken != nullptr)
         {
             PlayerState->AddTokenToSelected(SelectedToken);
@@ -158,28 +179,6 @@ bool AGameToken::IsNeighbor(const AGameToken* Other) const
     }
 
     return false;
-}
-
-void AGameToken::AssignMaterialInstanceToMesh()
-{
-    if (Material != nullptr)
-    {
-        MaterialInstance = UMaterialInstanceDynamic::Create(Material, this);
-        MaterialInstance->SetVectorParameterValue("BaseColor", GetMaterialInstanceColor());
-        Mesh->SetMaterial(0, MaterialInstance);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red,
-                                         TEXT("Couldn't create MaterialInstance for SM_GameToken!"));
-    }
-}
-
-void AGameToken::Init(const int32 Row, const int32 Column, const FVector InitialLocation)
-{
-    Index.Row = Row;
-    Index.Column = Column;
-    Location = InitialLocation;
 }
 
 // Called when the game starts or when spawned

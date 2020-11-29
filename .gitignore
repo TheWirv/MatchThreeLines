@@ -3,6 +3,7 @@
 
 # Rider for Unreal Engine cache/options directory
 .idea/
+*.sln.DotSettings
 
 # Compiled Object files
 *.slo

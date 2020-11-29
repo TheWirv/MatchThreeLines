@@ -6,10 +6,30 @@
 #include "GameFramework/Actor.h"
 #include "GameToken.generated.h"
 
+#define VERTICAL_OFFSET 86.5f
+#define HORIZONTAL_OFFSET 75.f
+
 struct FIndex
 {
-    int32 Row;
+    FIndex(): Column(0), Row(0)
+    {
+    }
+
+    FIndex(const int32 InColumn, const int32 InRow): Column(InColumn), Row(InRow)
+    {
+    }
+
     int32 Column;
+    int32 Row;
+};
+
+enum ETokenType
+{
+    Red,
+    Blue,
+    Green,
+    Yellow,
+    White
 };
 
 UCLASS()
@@ -21,6 +41,32 @@ class MATCHTHREELINES_API AGameToken : public AActor
 
     FVector Location;
     FIndex Index;
+
+    ETokenType TokenType;
+
+    void AssignMaterialInstanceToMesh();
+
+    /**
+    * Gets the color for this token's material instance.
+    *
+    * @returns This token's material instance color.
+    */
+    FColor GetMaterialInstanceColor() const
+    {
+        switch (TokenType)
+        {
+        case Red:
+            return FColor::Red;
+        case Blue:
+            return FColor::Blue;
+        case Green:
+            return FColor::Green;
+        case Yellow:
+            return FColor::Yellow;
+        default:
+            return FColor::White;
+        }
+    }
 
 public:
     // Sets default values for this actor's properties
@@ -35,15 +81,20 @@ public:
     UPROPERTY(VisibleAnywhere)
     class UMaterialInstanceDynamic* MaterialInstance;
 
-    enum ETokenTypes { Red, Blue, Green, Yellow, White };
+    void Init(const int32 Column, const int32 Row, const FVector InitialLocation);
 
-    ETokenTypes TokenType;
+    FIndex GetIndex() const;
 
-    void AssignMaterialInstanceToMesh();
-
-    FColor GetMaterialInstanceColor() const;
-
-    void Init(const int32 Row, const int32 Column, const FVector InitialLocation);
+    /**
+    * Equality operator.
+    *
+    * @param OtherToken GameToken to compare.
+    * @returns True if this GameToken has the same index as OtherToken. False otherwise.
+    */
+    bool operator==(const AGameToken* OtherToken) const
+    {
+        return Index.Row == OtherToken->Index.Row && Index.Column == OtherToken->Index.Column;
+    }
 
 protected:
     // Called when the game starts or when spawned
@@ -68,19 +119,4 @@ public:
     virtual void Tick(float DeltaTime) override;
 };
 
-FORCEINLINE FColor AGameToken::GetMaterialInstanceColor() const
-{
-    switch (TokenType)
-    {
-    case Red:
-        return FColor::Red;
-    case Blue:
-        return FColor::Blue;
-    case Green:
-        return FColor::Green;
-    case Yellow:
-        return FColor::Yellow;
-    default:
-        return FColor::White;
-    }
-}
+FORCEINLINE FIndex AGameToken::GetIndex() const { return Index; };
