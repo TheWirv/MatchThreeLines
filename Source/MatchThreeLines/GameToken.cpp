@@ -65,11 +65,11 @@ AGameToken::AGameToken()
     TokenType = static_cast<ETokenType>(RandomNumber);
 }
 
-void AGameToken::Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool InIsFallingDown)
+void AGameToken::Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool bInIsFallingDown)
 {
     Index = FIntPoint(Column, Row);
     LocationZ = InitialLocationZ;
-    bIsFallingDown = InIsFallingDown;
+    bIsFallingDown = bInIsFallingDown;
 }
 
 bool AGameToken::IsNeighbor(const AGameToken* Other) const

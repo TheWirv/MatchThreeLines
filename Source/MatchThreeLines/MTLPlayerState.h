@@ -31,7 +31,7 @@ public:
 
     TArray<AGameToken*> GetSelectedTokens() const;
 
-    void SetIsSelecting(const bool InIsSelecting);
+    void SetIsSelecting(const bool bInIsSelecting);
 
     void SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken);
 
@@ -48,7 +48,7 @@ FORCEINLINE AGameToken* AMTLPlayerState::GetHoveredOverGameToken() const { retur
 FORCEINLINE TArray<AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
 
 // Setters
-FORCEINLINE void AMTLPlayerState::SetIsSelecting(const bool InIsSelecting) { bIsSelecting = InIsSelecting; }
+FORCEINLINE void AMTLPlayerState::SetIsSelecting(const bool bInIsSelecting) { bIsSelecting = bInIsSelecting; }
 
 FORCEINLINE void AMTLPlayerState::SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken)
 {

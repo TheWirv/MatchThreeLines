@@ -55,7 +55,7 @@ class MATCHTHREELINES_API AMTLGameState : public AGameStateBase
 
     FVector CalculateGameTokenLocation(const int32 ColumnIndex, const int32 RowIndex) const;
 
-    bool SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool SpawnOutsideViewport = false);
+    bool SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool bSpawnOutsideViewport = false);
 
     void EndGame();
 

@@ -67,7 +67,7 @@ public:
     UPROPERTY(VisibleAnywhere)
     class UMaterialInstanceDynamic* MaterialInstance;
 
-    void Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool InIsFallingDown = false);
+    void Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool bInIsFallingDown = false);
 
     bool IsNeighbor(const AGameToken* Other) const;
 
@@ -75,7 +75,7 @@ public:
 
     FIntPoint GetIndex() const;
 
-    void SetIsFallingDown(const bool InIsFallingDown);
+    void SetIsFallingDown(const bool bInIsFallingDown);
 
     void SetLocationZ(const float NewLocationZ);
 
@@ -112,7 +112,7 @@ FORCEINLINE float AGameToken::GetLocationZ() const { return LocationZ; };
 FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };
 
 // Setters
-FORCEINLINE void AGameToken::SetIsFallingDown(const bool InIsFallingDown) { bIsFallingDown = InIsFallingDown; };
+FORCEINLINE void AGameToken::SetIsFallingDown(const bool bInIsFallingDown) { bIsFallingDown = bInIsFallingDown; };
 
 FORCEINLINE void AGameToken::SetLocationZ(const float NewLocationZ) { LocationZ = NewLocationZ; };
 

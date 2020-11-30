@@ -40,11 +40,11 @@ FVector AMTLGameState::CalculateGameTokenLocation(const int32 ColumnIndex, const
     return FVector(0.f, y, z);
 }
 
-bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool SpawnOutsideViewport)
+bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool bSpawnOutsideViewport)
 {
     FVector GameTokenLocation = CalculateGameTokenLocation(ColumnIndex, RowIndex);
     const float GameTokenLocationZ = GameTokenLocation.Z;
-    if (SpawnOutsideViewport)
+    if (bSpawnOutsideViewport)
     {
         GameTokenLocation.Z = 1550.f;
     }
@@ -53,7 +53,7 @@ bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex
         UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AGameToken::StaticClass(), Transform));
     if (SpawnedGameToken != nullptr)
     {
-        SpawnedGameToken->Init(ColumnIndex, RowIndex, GameTokenLocationZ, SpawnOutsideViewport);
+        SpawnedGameToken->Init(ColumnIndex, RowIndex, GameTokenLocationZ, bSpawnOutsideViewport);
         UGameplayStatics::FinishSpawningActor(SpawnedGameToken, Transform);
         PlayingField[ColumnIndex][RowIndex] = SpawnedGameToken;
         return true;
