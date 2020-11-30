@@ -6,12 +6,12 @@ There is a game field consisting of hex fields containing blocks. The player nee
 
 ## Requirements
 
-- [x] Gamefield with hex fields of appr. 7x6 blocks (randomly generated)
-- [x] At least 4 different block colors or motives
-- [x] Adjacent blocks can be selected if they have the same color
-- [x] Blocks shall be removed if at least 3 were selected, blocks above will &quot;fall down&quot;, when some upmost field is empty a random block will be generated
-- [x] Clear highlight when drawing backwards
-- [x] Mouse controls
+- [x] ~~Gamefield with hex fields of appr. 7x6 blocks (randomly generated)~~
+- [x] ~~At least 4 different block colors or motives~~
+- [x] ~~Adjacent blocks can be selected if they have the same color~~
+- [x] ~~Blocks shall be removed if at least 3 were selected, blocks above will &quot;fall down&quot;, when some upmost field is empty a random block will be generated~~
+- [x] ~~Clear highlight when drawing backwards~~
+- [x] ~~Mouse controls~~
 
 ## Ideas for more features, expansions..
 
