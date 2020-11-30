@@ -65,10 +65,11 @@ AGameToken::AGameToken()
     TokenType = static_cast<ETokenType>(RandomNumber);
 }
 
-void AGameToken::Init(const int32 Column, const int32 Row, const float InitialLocationZ)
+void AGameToken::Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool InIsFallingDown)
 {
     Index = FIntPoint(Column, Row);
     LocationZ = InitialLocationZ;
+    bIsFallingDown = InIsFallingDown;
 }
 
 bool AGameToken::IsNeighbor(const AGameToken* Other) const
@@ -155,7 +156,7 @@ void AGameToken::Tick(float DeltaTime)
     }
 
     MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
-    
+
     if (bIsFallingDown)
     {
         const float NewZ = FMath::FInterpTo(GetActorLocation().Z, LocationZ, DeltaTime, 7.5f);

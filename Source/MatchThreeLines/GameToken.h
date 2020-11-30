@@ -67,7 +67,7 @@ public:
     UPROPERTY(VisibleAnywhere)
     class UMaterialInstanceDynamic* MaterialInstance;
 
-    void Init(const int32 Column, const int32 Row, const float InitialLocationZ);
+    void Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool InIsFallingDown = false);
 
     bool IsNeighbor(const AGameToken* Other) const;
 
