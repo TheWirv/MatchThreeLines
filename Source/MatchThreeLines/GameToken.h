@@ -32,7 +32,6 @@ class MATCHTHREELINES_API AGameToken : public AActor
 {
     GENERATED_BODY()
 
-    bool bIsSelected;
     bool bIsFallingDown;
 
     float LocationZ;
@@ -83,6 +82,9 @@ public:
     /** Checks whether a GameToken is neighbor to another one */
     bool IsNeighbor(const AGameToken* Other) const;
 
+    /** Sets the MaterialInstance's "IsSelected" parameter to mark this token as selected */
+    void MarkSelected(const bool bIsSelected);
+
     float GetLocationZ() const;
 
     FIntPoint GetIndex() const;
@@ -91,9 +93,9 @@ public:
 
     void SetIsFallingDown(const bool bInIsFallingDown);
 
-    void SetLocationZ(const float NewLocationZ);
+    void SetLocationZ(const float InLocationZ);
 
-    void SetIndex(const FIntPoint NewIndex);
+    void SetIndex(const FIntPoint InIndex);
 
     bool IsOfSameType(const AGameToken* OtherToken) const;
 
@@ -124,9 +126,9 @@ FORCEINLINE float AGameToken::GetScoreValue() const { return ScoreValue; };
 // Setters
 FORCEINLINE void AGameToken::SetIsFallingDown(const bool bInIsFallingDown) { bIsFallingDown = bInIsFallingDown; };
 
-FORCEINLINE void AGameToken::SetLocationZ(const float NewLocationZ) { LocationZ = NewLocationZ; };
+FORCEINLINE void AGameToken::SetLocationZ(const float InLocationZ) { LocationZ = InLocationZ; };
 
-FORCEINLINE void AGameToken::SetIndex(const FIntPoint NewIndex) { Index = NewIndex; };
+FORCEINLINE void AGameToken::SetIndex(const FIntPoint InIndex) { Index = InIndex; };
 
 // Other inline functions
 FORCEINLINE bool AGameToken::IsOfSameType(const AGameToken* OtherToken) const

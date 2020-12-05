@@ -27,7 +27,6 @@ AGameToken::AGameToken()
     PrimaryActorTick.bCanEverTick = true;
 
     // Set defaults
-    bIsSelected = false;
     bIsFallingDown = false;
     ScoreValue = 25.f;
     int32 RandomNumber = FMath::RandRange(Red, White);
@@ -102,6 +101,12 @@ bool AGameToken::IsNeighbor(const AGameToken* Other) const
     return false;
 }
 
+void AGameToken::MarkSelected(const bool bIsSelected)
+{
+    // Update the material instance to display "IsSelected" border
+    MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
+}
+
 // protected functions
 void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
 {
@@ -147,22 +152,6 @@ void AGameToken::BeginPlay()
 void AGameToken::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        // GameToken has been selected if the SelectedTokens array contains it
-        bIsSelected = PlayerState->GetSelectedTokens().Contains(this);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red,
-                                         TEXT("Couldn't get PlayerState!"));
-    }
-
-    // Update the material instance to display "IsSelected" frame
-    MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
 
     if (bIsFallingDown)
     {

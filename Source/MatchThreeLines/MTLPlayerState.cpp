@@ -21,7 +21,7 @@ void AMTLPlayerState::DecrementAmountOfRemainingTurns()
     // Decrement AmountOfRemainingTurns by 1, then dispatch the event to update the UI
     AmountOfRemainingTurns -= 1;
     OnUpdateRemainingTurnsDelegate.Broadcast();
-    
+
     if (AmountOfRemainingTurns == 0)
     {
         // If this has been the final turn, get the player controller and end the game
@@ -42,27 +42,33 @@ void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
 {
     if (SelectedTokens.Num() > 0)
     {
-        // if the array already has some tokens in it, check whether this one has already been added
+        // If the array already has some Tokens in it, check whether this one has already been added
         if (!SelectedTokens.Contains(Token))
         {
             const AGameToken* LastToken = Cast<AGameToken>(SelectedTokens.Last());
             if (Token->IsNeighbor(LastToken) && Token->IsOfSameType(LastToken))
             {
-                // if it has not been added yet, and is a neighbor to and of the same type
-                // as the last selected token, add it to the array
+                // If the Token has not been added yet, and is a neighbor to and of the same type
+                // as the last selected token, it can be selected
+                Token->MarkSelected(true);
                 SelectedTokens.Add(Token);
             }
         }
         else
         {
-            // if this token has already been added, get its index and resize the array to index + 1 
+            // If this token has already been added, get its index and resize the array to index + 1 
             const int32 IndexInSelected = SelectedTokens.IndexOfByKey(Token);
+            for (int32 i = IndexInSelected + 1; i < SelectedTokens.Num(); i++)
+            {
+                SelectedTokens[i]->MarkSelected(false);
+            }
             SelectedTokens.SetNum(IndexInSelected + 1);
         }
     }
     else
     {
-        // if the array is empty, just add this one
+        // If the array is empty, just add this Token
+        Token->MarkSelected(true);
         SelectedTokens.Add(Token);
     }
 }
@@ -111,6 +117,13 @@ void AMTLPlayerState::EndTurn()
         else
         {
             GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState!"));
+        }
+    }
+    else
+    {
+        for (auto Token : SelectedTokens)
+        {
+            Token->MarkSelected(false);
         }
     }
     SelectedTokens.Empty();

@@ -19,6 +19,9 @@ There is a game field consisting of hex fields containing blocks. The player nee
 - [ ] Varying probabilities for the different token types (the rarer, the more points it's worth)
 - [X] ~~Game ends after x moves~~
 - [X] ~~Possibility to restart the game after ending of game~~
+- [ ] Background music
+- [ ] Options screen that enables customization of grid size, max amount of turns, and min required selected tokens
+- [ ] Info screen that explains the gameplay, the inputs, and the different token types
 - [ ] Exception Handling
 - [ ] Special blocks with special effects
 - [ ] Combos
