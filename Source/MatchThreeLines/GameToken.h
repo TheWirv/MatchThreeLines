@@ -18,6 +18,15 @@ enum ETokenType
     White
 };
 
+/**
+ * GameToken Actor
+ * - Main interactable item in the game
+ * - The playing field is made up exclusively of these GameTokens
+ * - Has a type, which determines its color
+ * - Has a score value that is (as of now) uniformly equal among all GameTokens
+ * - Can be selected, which gives it a highlighted border
+ * - Can be animated to fall down
+ */
 UCLASS()
 class MATCHTHREELINES_API AGameToken : public AActor
 {
@@ -29,6 +38,7 @@ class MATCHTHREELINES_API AGameToken : public AActor
     float LocationZ;
     
     FIntPoint Index;
+    float ScoreValue;
     ETokenType TokenType;
 
     /** Creates a dynamic material instance and assigns it to the Token's static mesh */
@@ -77,6 +87,8 @@ public:
 
     FIntPoint GetIndex() const;
 
+    float GetScoreValue() const;
+
     void SetIsFallingDown(const bool bInIsFallingDown);
 
     void SetLocationZ(const float NewLocationZ);
@@ -106,6 +118,8 @@ public:
 FORCEINLINE float AGameToken::GetLocationZ() const { return LocationZ; };
 
 FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };
+
+FORCEINLINE float AGameToken::GetScoreValue() const { return ScoreValue; };
 
 // Setters
 FORCEINLINE void AGameToken::SetIsFallingDown(const bool bInIsFallingDown) { bIsFallingDown = bInIsFallingDown; };

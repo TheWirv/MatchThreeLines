@@ -79,7 +79,7 @@ void AMTLPlayerController::EndGame()
     {
         Pause();
         ChangeMenuWidget(EndMenuWidget);
-    }, 0.75f, false);
+    }, 0.5f, false);
 }
 
 void AMTLPlayerController::StartOrResumeGame()

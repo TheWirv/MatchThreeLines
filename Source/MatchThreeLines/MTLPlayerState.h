@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerState.h"
 #include "MTLPlayerState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateScoreDelegate);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateRemainingTurnsDelegate);
 
 /**
@@ -33,12 +34,19 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
     UPROPERTY()
     TArray<AGameToken*> SelectedTokens;
 
-public:
-    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
-    int32 GetAmountOfRemainingTurns() const;
+    /** Increases the score by the accumulated score amount of all selected GameTokens */
+    void IncreaseScore();
 
     /** Decrements AmountOfRemainingTurns by 1, and ends the game if the result is 0 */
     void DecrementAmountOfRemainingTurns();
+
+public:
+    /** Event dispatcher to let the UI know about changes regarding the player's score */
+    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    FUpdateScoreDelegate OnUpdateScoreDelegate;
+
+    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    int32 GetAmountOfRemainingTurns() const;
 
     /** Event dispatcher to let the UI know about changes regarding AmountOfRemainingTurns */
     UPROPERTY(BlueprintAssignable, Category = "MTL – UI")

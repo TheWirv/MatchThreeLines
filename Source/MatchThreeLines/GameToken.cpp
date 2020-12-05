@@ -29,6 +29,7 @@ AGameToken::AGameToken()
     // Set defaults
     bIsSelected = false;
     bIsFallingDown = false;
+    ScoreValue = 25.f;
     int32 RandomNumber = FMath::RandRange(Red, White);
     TokenType = static_cast<ETokenType>(RandomNumber);
 

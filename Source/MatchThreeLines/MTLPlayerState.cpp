@@ -6,7 +6,16 @@
 #include "MTLGameState.h"
 #include "MTLGameMode.h"
 
-// public functions
+// private fuctions
+void AMTLPlayerState::IncreaseScore()
+{
+    // Since all selected Tokens must be of the same type, the first item suffices for this use case
+    const AGameToken* FirstSelectedToken = SelectedTokens[0];
+    SetScore(GetScore() + FirstSelectedToken->GetScoreValue() * SelectedTokens.Num());
+    // After actually increasing the score, dispatch the event to update the UI
+    OnUpdateScoreDelegate.Broadcast();
+}
+
 void AMTLPlayerState::DecrementAmountOfRemainingTurns()
 {
     // Decrement AmountOfRemainingTurns by 1, then dispatch the event to update the UI
@@ -28,6 +37,7 @@ void AMTLPlayerState::DecrementAmountOfRemainingTurns()
     }
 }
 
+// public functions
 void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
 {
     if (SelectedTokens.Num() > 0)
@@ -67,6 +77,7 @@ void AMTLPlayerState::EndTurn()
         {
             if (GameState->DestroyTokens(SelectedTokens))
             {
+                IncreaseScore();
                 DecrementAmountOfRemainingTurns();
             }
             else
@@ -93,6 +104,7 @@ void AMTLPlayerState::BeginPlay()
         const AMTLGameMode* GameMode = GameStateBase->GetDefaultGameMode<AMTLGameMode>();
         if (GameMode != nullptr)
         {
+            SetScore(0.f);
             AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
         }
         else
