@@ -1,27 +1,35 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MTLGameState.h"
-#include "MTLPlayerController.h"
+#include "MTLGameMode.h"
 
 #include "Kismet/GameplayStatics.h"
 
 // private functions
-void AMTLGameState::InitPlayingField(const AMTLGameMode* GameMode)
+void AMTLGameState::InitPlayingField()
 {
-    PlayingField.SetNum(GameMode->GetAmountOfColumns());
-
-    for (int32 i = 0; i < PlayingField.Num(); i++)
+    const AMTLGameMode* GameMode = GetDefaultGameMode<AMTLGameMode>();
+    if (GameMode != nullptr)
     {
-        auto& Column = PlayingField[i];
-        Column.SetNum(GameMode->GetAmountOfRows());
+        PlayingField.SetNum(GameMode->GetAmountOfColumns());
 
-        for (int32 j = 0; j < Column.Num(); j++)
+        for (int32 i = 0; i < PlayingField.Num(); i++)
         {
-            if (!SpawnGameToken(i, j))
+            auto& Column = PlayingField[i];
+            Column.SetNum(GameMode->GetAmountOfRows());
+
+            for (int32 j = 0; j < Column.Num(); j++)
             {
-                GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
+                if (!SpawnGameToken(i, j))
+                {
+                    GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
+                }
             }
         }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
     }
 }
 
@@ -58,29 +66,6 @@ bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex
 }
 
 // public functions
-void AMTLGameState::DecrementAmountOfRemainingTurns()
-{
-    AmountOfRemainingTurns -= 1;
-    if (AmountOfRemainingTurns == 0)
-    {
-        // If this has been the final turn, get the player controller and end the game
-        AMTLPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<AMTLPlayerController>();
-        if (PlayerController != nullptr)
-        {
-            PlayerController->EndGame();
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
-        }
-    }
-    else
-    {
-        // If this has not been the last turn, dispatch the event to update the UI
-        OnUpdateRemainingTurnsDelegate.Broadcast();
-    }
-}
-
 bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
 {
     TArray<FFallingGameToken> FallingGameTokens;
@@ -186,14 +171,5 @@ void AMTLGameState::BeginPlay()
 {
     Super::BeginPlay();
 
-    const AMTLGameMode* GameMode = GetDefaultGameMode<AMTLGameMode>();
-    if (GameMode != nullptr)
-    {
-        AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
-        InitPlayingField(GameMode);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
-    }
+    InitPlayingField();
 }

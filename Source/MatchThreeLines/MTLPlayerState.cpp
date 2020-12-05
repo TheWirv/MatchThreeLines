@@ -2,9 +2,32 @@
 
 
 #include "MTLPlayerState.h"
+#include "MTLPlayerController.h"
 #include "MTLGameState.h"
+#include "MTLGameMode.h"
 
 // public functions
+void AMTLPlayerState::DecrementAmountOfRemainingTurns()
+{
+    // Decrement AmountOfRemainingTurns by 1, then dispatch the event to update the UI
+    AmountOfRemainingTurns -= 1;
+    OnUpdateRemainingTurnsDelegate.Broadcast();
+    
+    if (AmountOfRemainingTurns == 0)
+    {
+        // If this has been the final turn, get the player controller and end the game
+        AMTLPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<AMTLPlayerController>();
+        if (PlayerController != nullptr)
+        {
+            PlayerController->EndGame();
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
+        }
+    }
+}
+
 void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
 {
     if (SelectedTokens.Num() > 0)
@@ -44,7 +67,7 @@ void AMTLPlayerState::EndTurn()
         {
             if (GameState->DestroyTokens(SelectedTokens))
             {
-                GameState->DecrementAmountOfRemainingTurns();
+                DecrementAmountOfRemainingTurns();
             }
             else
             {
@@ -52,6 +75,33 @@ void AMTLPlayerState::EndTurn()
                                                  TEXT("Couldn't destroy all GameTokens!"));
             }
         }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState!"));
+        }
     }
     SelectedTokens.Empty();
+}
+
+void AMTLPlayerState::BeginPlay()
+{
+    Super::BeginPlay();
+
+    AGameStateBase* GameStateBase = GetWorld()->GetGameState();
+    if (GameStateBase != nullptr)
+    {
+        const AMTLGameMode* GameMode = GameStateBase->GetDefaultGameMode<AMTLGameMode>();
+        if (GameMode != nullptr)
+        {
+            AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState!"));
+    }
 }
