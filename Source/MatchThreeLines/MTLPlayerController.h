@@ -34,9 +34,13 @@ public:
     /** Wait for a tiny bit, then display the End menu */
     void EndGame();
 
-    /** Display the in-game menu, then unpause the game */
+    /** Hide the main/pause menu, display the in-game menu, then unpause the game */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     void StartOrResumeGame();
+
+    /** Reset the playing field, score and remaining turns */
+    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    void ResetGame() const;
 
 protected:
     /** Called when the game starts. */

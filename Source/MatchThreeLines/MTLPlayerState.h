@@ -64,6 +64,9 @@ public:
 
     void AddTokenToSelected(AGameToken* Token);
 
+    /** Reset all members to default/initial values */
+    void Init();
+
     /** Destroys all selected GameTokens, if more than three have been selected; then decrements AmountOfRemainingTurns */
     void EndTurn();
 

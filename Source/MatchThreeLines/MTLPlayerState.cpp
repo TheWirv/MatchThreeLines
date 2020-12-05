@@ -67,6 +67,28 @@ void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
     }
 }
 
+void AMTLPlayerState::Init()
+{
+    AGameStateBase* GameStateBase = GetWorld()->GetGameState();
+    if (GameStateBase != nullptr)
+    {
+        const AMTLGameMode* GameMode = GameStateBase->GetDefaultGameMode<AMTLGameMode>();
+        if (GameMode != nullptr)
+        {
+            SetScore(0.f);
+            AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState!"));
+    }
+}
+
 void AMTLPlayerState::EndTurn()
 {
     SetIsSelecting(false);
@@ -98,22 +120,5 @@ void AMTLPlayerState::BeginPlay()
 {
     Super::BeginPlay();
 
-    AGameStateBase* GameStateBase = GetWorld()->GetGameState();
-    if (GameStateBase != nullptr)
-    {
-        const AMTLGameMode* GameMode = GameStateBase->GetDefaultGameMode<AMTLGameMode>();
-        if (GameMode != nullptr)
-        {
-            SetScore(0.f);
-            AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
-        }
-        else
-        {
-            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
-        }
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState!"));
-    }
+    Init();
 }

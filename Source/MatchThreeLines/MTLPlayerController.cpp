@@ -4,6 +4,7 @@
 #include "MTLPlayerController.h"
 #include "MTLPlayerState.h"
 #include "GameToken.h"
+#include "MTLGameState.h"
 
 // private functions
 void AMTLPlayerController::OnMouseClicked()
@@ -86,6 +87,22 @@ void AMTLPlayerController::StartOrResumeGame()
 {
     ChangeMenuWidget(InGameWidget);
     SetPause(false);
+}
+
+void AMTLPlayerController::ResetGame() const
+{
+    AMTLGameState* GameState = GetWorld()->GetGameState<AMTLGameState>();
+    AMTLPlayerState* MTLPlayerState = GetPlayerState<AMTLPlayerState>();
+    
+    if (GameState != nullptr && MTLPlayerState != nullptr)
+    {
+        GameState->ResetPlayingField();
+        MTLPlayerState->Init();
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState or PlayerState!"));
+    }
 }
 
 // protected functions

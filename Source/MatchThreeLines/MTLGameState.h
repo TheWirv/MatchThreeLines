@@ -73,6 +73,8 @@ public:
      */
     bool DestroyTokens(TArray<AGameToken*> SelectedTokens);
 
+    void ResetPlayingField();
+
 protected:
     virtual void BeginPlay() override;
 };

@@ -166,6 +166,21 @@ bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
     return true;
 };
 
+void AMTLGameState::ResetPlayingField()
+{
+    for (TArray<AGameToken*>& Column : PlayingField)
+    {
+        for (AGameToken* Token : Column)
+        {
+            Token->Destroy();
+        }
+        Column.Empty();
+    }
+    PlayingField.Empty();
+
+    InitPlayingField();
+}
+
 // protected functions
 void AMTLGameState::BeginPlay()
 {
