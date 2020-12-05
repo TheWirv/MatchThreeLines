@@ -26,8 +26,11 @@ AGameToken::AGameToken()
     // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
+    // Set defaults
     bIsSelected = false;
     bIsFallingDown = false;
+    int32 RandomNumber = FMath::RandRange(Red, White);
+    TokenType = static_cast<ETokenType>(RandomNumber);
 
     // Set up StaticMesh component
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
@@ -39,15 +42,19 @@ AGameToken::AGameToken()
     UStaticMesh* PlaneMesh = MeshAsset.Object;
     if (PlaneMesh != nullptr)
     {
+        // If we have the mesh asset, get the material asset
         static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(
             TEXT("Material'/Game/Materials/M_GameToken.M_GameToken'"));
         Material = MaterialAsset.Object;
         if (Material != nullptr)
         {
+            // If we have the material asset, assign the mesh and material assets to the component
             Mesh->SetStaticMesh(PlaneMesh);
             Mesh->SetMaterial(0, Material);
+            // Rotate the plane
             const FRotator Rotation(0.f, 90.f, 90.f);
             Mesh->SetRelativeRotation(Rotation);
+            // Set the two hover events
             this->OnBeginCursorOver.AddDynamic(this, &AGameToken::OnBeginMouseOver);
             this->OnEndCursorOver.AddDynamic(this, &AGameToken::OnEndMouseOver);
         }
@@ -60,9 +67,6 @@ AGameToken::AGameToken()
     {
         UE_LOG(LogTemp, Error, TEXT("Couldn't get SM_GameToken!"));
     }
-
-    int32 RandomNumber = FMath::RandRange(Red, White);
-    TokenType = static_cast<ETokenType>(RandomNumber);
 }
 
 void AGameToken::Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool bInIsFallingDown)
@@ -147,6 +151,7 @@ void AGameToken::Tick(float DeltaTime)
 
     if (PlayerState != nullptr)
     {
+        // GameToken has been selected if the SelectedTokens array contains it
         bIsSelected = PlayerState->GetSelectedTokens().Contains(this);
     }
     else
@@ -155,15 +160,17 @@ void AGameToken::Tick(float DeltaTime)
                                          TEXT("Couldn't get PlayerState!"));
     }
 
+    // Update the material instance to display "IsSelected" frame
     MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
 
     if (bIsFallingDown)
     {
+        // Animate the GameToken to fall down, until it has reached its actually supposed Z location 
         const float NewZ = FMath::FInterpTo(GetActorLocation().Z, LocationZ, DeltaTime, 7.5f);
+        SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, NewZ));
         if (NewZ == LocationZ)
         {
             bIsFallingDown = false;
         }
-        SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, NewZ));
     }
 }

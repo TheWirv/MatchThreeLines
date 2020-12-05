@@ -18,7 +18,8 @@ There is a game field consisting of hex fields containing blocks. The player nee
 - [ ] Score (+ UI)
 - [ ] Varying probabilities for the different token types (the rarer, the more points it's worth)
 - [ ] Game ends after x moves
-- [ ] Possibility to restart the game after game over
+- [ ] Possibility to restart the game after ending of game
+- [ ] Exception Handling
 - [ ] Special blocks with special effects
 - [ ] Combos
 - [ ] …

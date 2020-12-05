@@ -9,10 +9,13 @@
 #include "MTLGameMode.h"
 #include "MTLGameState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateRemainingTurnsDelegate);
+
+/** Structure that describes a GameToken that is falling down from outside the viewport, and how many units it is supposed to fall */
 struct FFallingGameToken
 {
     AGameToken* Token; // Pointer to the actual token
-    int32 Amount; // How many units is this token about to fall
+    int32 Amount; // How many units this token is supposed to fall down
 
     FFallingGameToken(AGameToken* InToken, const int32 InitialAmount): Token(InToken), Amount(InitialAmount)
     {
@@ -24,6 +27,7 @@ struct FFallingGameToken
     }
 };
 
+/** Structure that counts how many new GameTokens have to be spawned in one column */
 struct FRespawningGameTokenCounter
 {
     int32 ColumnIndex; // The column's index
@@ -41,7 +45,8 @@ struct FRespawningGameTokenCounter
 };
 
 /**
- *
+ * Custom GameState
+ * - Holds and manages the playing field and the amount of remaining turns 
  */
 UCLASS()
 class MATCHTHREELINES_API AMTLGameState : public AGameStateBase
@@ -51,20 +56,36 @@ class MATCHTHREELINES_API AMTLGameState : public AGameStateBase
     int32 AmountOfRemainingTurns;
     TArray<TArray<AGameToken*>> PlayingField;
 
+    /** Sets up the playing field's grid and spawns all the GameTokens */
     void InitPlayingField(const AMTLGameMode* GameMode);
 
+    /** Calculates the correct location vector a passed pair of column and row indeces */
     FVector CalculateGameTokenLocation(const int32 ColumnIndex, const int32 RowIndex) const;
 
+    /**
+     * Spawns a GameToken at the correct location, defined by its respective column and row indeces
+     * @param ColumnIndex The GameToken's column index
+     * @param RowIndex The GameToken's row index
+     * @param bSpawnOutsideViewport Used during the game for respawning new GameTokens outside of the viewport (let them "fall down")
+     */
     bool SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool bSpawnOutsideViewport = false);
 
-    void EndGame();
-
 public:
+    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     int32 GetAmountOfRemainingTurns() const;
 
+    /** Decrements AmountOfRemainingTurns by 1, and ends the game if the result is 0 */
     void DecrementAmountOfRemainingTurns();
 
+    /**
+     * Destroys passed SelectedTokens, removes them from the PlayingField and respawns new ones at the top to fill up the grid again
+     * @param SelectedTokens Tokens that are to be destroyed
+     */
     bool DestroyTokens(TArray<AGameToken*> SelectedTokens);
+
+    /** Event dispatcher to let the UI know about changes regarding AmountOfRemainingTurns */
+    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    FUpdateRemainingTurnsDelegate OnUpdateRemainingTurnsDelegate;
 
 protected:
     virtual void BeginPlay() override;

@@ -18,9 +18,11 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
 
     bool bIsSelecting;
 
+    /** The GameToken that the player is currently hovering over with their mouse cursor */
     UPROPERTY()
     AGameToken* HoveredOverGameToken;
 
+    /** Holds the "selected tokens" as soon as the player presses the left mouse button while hovering over a GameToken */
     UPROPERTY()
     TArray<AGameToken*> SelectedTokens;
 
@@ -37,6 +39,7 @@ public:
 
     void AddTokenToSelected(AGameToken* Token);
 
+    /** Destroys all selected GameTokens, if more than three have been selected; then decrements AmountOfRemainingTurns */
     void EndTurn();
 };
 

@@ -27,14 +27,15 @@ class MATCHTHREELINES_API AGameToken : public AActor
     bool bIsFallingDown;
 
     float LocationZ;
+    
     FIntPoint Index;
     ETokenType TokenType;
 
+    /** Creates a dynamic material instance and assigns it to the Token's static mesh */
     void AssignMaterialInstanceToMesh();
 
     /**
     * Gets the color for this token's material instance.
-    *
     * @returns This token's material instance color.
     */
     FColor GetMaterialInstanceColor() const
@@ -55,7 +56,6 @@ class MATCHTHREELINES_API AGameToken : public AActor
     }
 
 public:
-    // Sets default values for this actor's properties
     AGameToken();
 
     UPROPERTY(VisibleAnywhere)
@@ -67,8 +67,10 @@ public:
     UPROPERTY(VisibleAnywhere)
     class UMaterialInstanceDynamic* MaterialInstance;
 
+    /** Initializes the GameToken; basically acts kind of as a deferred constructor */
     void Init(const int32 Column, const int32 Row, const float InitialLocationZ, const bool bInIsFallingDown = false);
 
+    /** Checks whether a GameToken is neighbor to another one */
     bool IsNeighbor(const AGameToken* Other) const;
 
     float GetLocationZ() const;
@@ -83,12 +85,6 @@ public:
 
     bool IsOfSameType(const AGameToken* OtherToken) const;
 
-    /**
-    * Equality operator.
-    *
-    * @param OtherToken GameToken to compare.
-    * @returns True if GameToken and OtherToken have the same Index. False otherwise.
-    */
     bool operator==(const AGameToken* OtherToken) const;
 
 protected:

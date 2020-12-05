@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "MTLGameState.h"
+#include "MTLPlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
 
 // private functions
 void AMTLGameState::InitPlayingField(const AMTLGameMode* GameMode)
 {
-    AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
     PlayingField.SetNum(GameMode->GetAmountOfColumns());
 
     for (int32 i = 0; i < PlayingField.Num(); i++)
@@ -17,16 +17,9 @@ void AMTLGameState::InitPlayingField(const AMTLGameMode* GameMode)
 
         for (int32 j = 0; j < Column.Num(); j++)
         {
-            if (GetWorld() != nullptr)
+            if (!SpawnGameToken(i, j))
             {
-                if (!SpawnGameToken(i, j))
-                {
-                    GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
-                }
-            }
-            else
-            {
-                GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("UWorld is not spawned yet!"));
+                GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
             }
         }
     }
@@ -46,6 +39,7 @@ bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex
     const float GameTokenLocationZ = GameTokenLocation.Z;
     if (bSpawnOutsideViewport)
     {
+        // Tokens that are respawned during gameplay need a custom Z location
         GameTokenLocation.Z = 1550.f;
     }
     const FTransform Transform(GameTokenLocation);
@@ -53,19 +47,14 @@ bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex
         UGameplayStatics::BeginDeferredActorSpawnFromClass(this, AGameToken::StaticClass(), Transform));
     if (SpawnedGameToken != nullptr)
     {
+        // initialize the GameToken, then add it to the playing field, and finally finish spawning it 
         SpawnedGameToken->Init(ColumnIndex, RowIndex, GameTokenLocationZ, bSpawnOutsideViewport);
-        UGameplayStatics::FinishSpawningActor(SpawnedGameToken, Transform);
         PlayingField[ColumnIndex][RowIndex] = SpawnedGameToken;
+        UGameplayStatics::FinishSpawningActor(SpawnedGameToken, Transform);
         return true;
     }
 
     return false;
-}
-
-void AMTLGameState::EndGame()
-{
-    GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1.f, FColor::Green, TEXT("The game is over!"));
-    // FGenericPlatformMisc::RequestExit(false);
 }
 
 // public functions
@@ -74,7 +63,21 @@ void AMTLGameState::DecrementAmountOfRemainingTurns()
     AmountOfRemainingTurns -= 1;
     if (AmountOfRemainingTurns == 0)
     {
-        EndGame();
+        // If this has been the final turn, get the player controller and end the game
+        AMTLPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<AMTLPlayerController>();
+        if (PlayerController != nullptr)
+        {
+            PlayerController->EndGame();
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameMode!"));
+        }
+    }
+    else
+    {
+        // If this has not been the last turn, dispatch the event to update the UI
+        OnUpdateRemainingTurnsDelegate.Broadcast();
     }
 }
 
@@ -162,16 +165,9 @@ bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
                      RowIndex++)
                 {
                     PlayingField[RespawningGameTokenCounter.ColumnIndex].SetNum(GameMode->GetAmountOfRows());
-                    if (GetWorld() != nullptr)
+                    if (!SpawnGameToken(RespawningGameTokenCounter.ColumnIndex, RowIndex, true))
                     {
-                        if (!SpawnGameToken(RespawningGameTokenCounter.ColumnIndex, RowIndex, true))
-                        {
-                            GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
-                        }
-                    }
-                    else
-                    {
-                        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("UWorld is not spawned yet!"));
+                        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Could not spawn Token!"));
                     }
                 }
             }
@@ -193,6 +189,7 @@ void AMTLGameState::BeginPlay()
     const AMTLGameMode* GameMode = GetDefaultGameMode<AMTLGameMode>();
     if (GameMode != nullptr)
     {
+        AmountOfRemainingTurns = GameMode->GetMaxAmountOfTurns();
         InitPlayingField(GameMode);
     }
     else

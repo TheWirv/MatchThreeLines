@@ -45,11 +45,6 @@ void AMTLPlayerState::EndTurn()
             if (GameState->DestroyTokens(SelectedTokens))
             {
                 GameState->DecrementAmountOfRemainingTurns();
-                GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Green, TEXT("You finished your turn!"));
-                GEngine->AddOnScreenDebugMessage(2, 1.f, FColor::Green,
-                                                 FString("You have ").Append(
-                                                     FString::FromInt(GameState->GetAmountOfRemainingTurns())).Append(
-                                                     " amount of turns left."));
             }
             else
             {

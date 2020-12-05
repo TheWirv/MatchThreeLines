@@ -15,7 +15,7 @@ class MATCHTHREELINES_API AMTLGameMode : public AGameModeBase
 {
     GENERATED_BODY()
 
-	int32 MaxAmountOfTurns;
+    int32 MaxAmountOfTurns;
     int32 AmountOfColumns;
     int32 AmountOfRows;
 

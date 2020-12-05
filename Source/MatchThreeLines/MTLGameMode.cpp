@@ -5,14 +5,14 @@
 #include "MTLGameState.h"
 #include "MTLPlayerState.h"
 
-AMTLGameMode::AMTLGameMode(): MaxAmountOfTurns(15), AmountOfColumns(7), AmountOfRows(11)
-{
-	// Set up custom PlayerController
-	PlayerControllerClass = AMTLPlayerController::StaticClass();
+AMTLGameMode::AMTLGameMode(): MaxAmountOfTurns(5), AmountOfColumns(7), AmountOfRows(11)
+{   
+    // Set up custom PlayerController
+    PlayerControllerClass = AMTLPlayerController::StaticClass();
 
-	// Set up custom GameState
-	GameStateClass = AMTLGameState::StaticClass();
+    // Set up custom GameState
+    GameStateClass = AMTLGameState::StaticClass();
 
-	// Set up custom PlayerState
-	PlayerStateClass = AMTLPlayerState::StaticClass();
+    // Set up custom PlayerState
+    PlayerStateClass = AMTLPlayerState::StaticClass();
 }
