@@ -18,5 +18,8 @@
 			"Name": "PythonScriptPlugin",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"WindowsNoEditor"
 	]
 }
