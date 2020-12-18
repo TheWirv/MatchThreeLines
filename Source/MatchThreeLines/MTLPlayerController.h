@@ -31,8 +31,6 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
     /** Saves the player's progress, like their name and high score */
     void SaveProfile();
 
-    void CheckSaveGameSuccess(const FString& SlotName, const int32 UserIndex, const bool bSuccess);
-
     /** Loads the player's prior progress, like their name and high score */
     void LoadProfile();
 
@@ -42,16 +40,17 @@ public:
     /** Wait for a tiny bit, then display the End menu */
     void EndGame();
 
-    /**
-     * Hide the main/pause menu, display the in-game menu, then unpause the game
-     * @param Resume Whether this is called to resume or start a new game; when starting afresh, the player's name is being saved
-     */
+    /** Hide the main/pause menu, display the in-game menu, then unpause the game */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
-    void StartOrResumeGame(const bool Resume = false);
+    void StartOrResumeGame();
 
     /** Reset the playing field, score and remaining turns */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     void ResetGame() const;
+
+    /** Quit the game, after having saved the profile */
+    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    void Quit();
 
 protected:
     /** Called when the game starts. */

@@ -51,6 +51,7 @@ class MATCHTHREELINES_API AMTLGameState : public AGameStateBase
     GENERATED_BODY()
 
     TArray<TArray<AGameToken*>> PlayingField;
+    float HighScore;
 
     /** Sets up the playing field's grid and spawns all the GameTokens */
     void InitPlayingField();
@@ -75,6 +76,17 @@ public:
 
     void ResetPlayingField();
 
+    void SetHighScore(const float InHighScore);
+
+    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    float GetHighScore() const;
+
 protected:
     virtual void BeginPlay() override;
 };
+
+// Getters
+FORCEINLINE float AMTLGameState::GetHighScore() const { return HighScore; };
+
+// Setters
+FORCEINLINE void AMTLGameState::SetHighScore(const float InHighScore) { HighScore = InHighScore; };

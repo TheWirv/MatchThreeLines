@@ -81,8 +81,6 @@ protected:
 // Getters
 FORCEINLINE int32 AMTLPlayerState::GetAmountOfRemainingTurns() const { return AmountOfRemainingTurns; };
 
-FORCEINLINE void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName) { SetPlayerName(InPlayerName); };
-
 FORCEINLINE bool AMTLPlayerState::IsSelecting() const { return bIsSelecting; }
 
 FORCEINLINE AGameToken* AMTLPlayerState::GetHoveredOverGameToken() const { return HoveredOverGameToken; }
@@ -90,6 +88,8 @@ FORCEINLINE AGameToken* AMTLPlayerState::GetHoveredOverGameToken() const { retur
 FORCEINLINE TArray<AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
 
 // Setters
+FORCEINLINE void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName) { SetPlayerName(InPlayerName); };
+
 FORCEINLINE void AMTLPlayerState::SetIsSelecting(const bool bInIsSelecting) { bIsSelecting = bInIsSelecting; }
 
 FORCEINLINE void AMTLPlayerState::SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken)
