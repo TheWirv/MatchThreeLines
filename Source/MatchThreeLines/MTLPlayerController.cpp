@@ -5,6 +5,8 @@
 #include "MTLPlayerState.h"
 #include "GameToken.h"
 #include "MTLGameState.h"
+#include "MTLSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 
 // private functions
 void AMTLPlayerController::OnMouseClicked()
@@ -65,6 +67,45 @@ void AMTLPlayerController::ChangeMenuWidget(const TSubclassOf<UUserWidget> NewWi
     }
 }
 
+void AMTLPlayerController::SaveProfile()
+{
+    if (UMTLSaveGame* SaveGameInstance = Cast<UMTLSaveGame>(
+        UGameplayStatics::CreateSaveGameObject(UMTLSaveGame::StaticClass())))
+    {
+        FAsyncSaveGameToSlotDelegate SaveGameToSlotDelegate;
+        SaveGameToSlotDelegate.BindUObject(this, &AMTLPlayerController::CheckSaveGameSuccess);
+
+        SaveGameInstance->PlayerName = PlayerState->GetPlayerName();
+
+        UGameplayStatics::AsyncSaveGameToSlot(SaveGameInstance, DEFAULT_SAVE_SLOT_NAME,
+                                              SaveGameInstance->UserIndex, SaveGameToSlotDelegate);
+    }
+}
+
+void AMTLPlayerController::CheckSaveGameSuccess(const FString& SlotName, const int32 UserIndex, const bool bSuccess)
+{
+    if (!bSuccess)
+    {
+        GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Failed to save the game!"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Log, TEXT("Successfully save the game for player `%s`"), *PlayerState->GetPlayerName());
+    }
+}
+
+void AMTLPlayerController::LoadProfile()
+{
+    // Weirdly, the PlayerName is being populated with the computer's name, so reset it first
+    PlayerState->SetPlayerName("");
+    UE_LOG(LogTemp, Log, TEXT("PlayerName: `%s`"), *PlayerState->GetPlayerName());
+    if (UMTLSaveGame* LoadedProfile = Cast<UMTLSaveGame>(UGameplayStatics::LoadGameFromSlot(DEFAULT_SAVE_SLOT_NAME, 0)))
+    {
+        PlayerState->SetPlayerName(LoadedProfile->PlayerName);
+        UE_LOG(LogTemp, Log, TEXT("Loaded profile for Player `%s`"), *LoadedProfile->PlayerName);
+    }
+}
+
 // public functions
 AMTLPlayerController::AMTLPlayerController()
 {
@@ -83,8 +124,13 @@ void AMTLPlayerController::EndGame()
     }, 0.5f, false);
 }
 
-void AMTLPlayerController::StartOrResumeGame()
+void AMTLPlayerController::StartOrResumeGame(const bool Resume)
 {
+    if (!Resume)
+    {
+        // When starting the game, save the player's name
+        SaveProfile();
+    }
     ChangeMenuWidget(InGameWidget);
     SetPause(false);
 }
@@ -93,7 +139,7 @@ void AMTLPlayerController::ResetGame() const
 {
     AMTLGameState* GameState = GetWorld()->GetGameState<AMTLGameState>();
     AMTLPlayerState* MTLPlayerState = GetPlayerState<AMTLPlayerState>();
-    
+
     if (GameState != nullptr && MTLPlayerState != nullptr)
     {
         GameState->ResetPlayingField();
@@ -101,7 +147,7 @@ void AMTLPlayerController::ResetGame() const
     }
     else
     {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get GameState or PlayerState!"));
+        GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Couldn't get GameState or PlayerState!"));
     }
 }
 
@@ -120,5 +166,8 @@ void AMTLPlayerController::BeginPlay()
     Super::BeginPlay();
 
     Pause();
+
+    LoadProfile();
+
     ChangeMenuWidget(MainMenuWidget);
 }

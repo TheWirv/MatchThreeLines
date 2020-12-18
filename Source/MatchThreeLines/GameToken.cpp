@@ -20,6 +20,41 @@ void AGameToken::AssignMaterialInstanceToMesh()
     }
 }
 
+void AGameToken::AssignTokenType()
+{
+    const float RandomNumber = FMath::RandRange(0.f, 1.f);
+    if (RandomNumber < 0.3f)
+    {
+        // 30% white tokens
+        TokenType = ETokenType::White;
+        ScoreValue = 25.f;
+    }
+    else if (RandomNumber >= 0.3f && RandomNumber < 0.5f)
+    {
+        // 20% blue tokens
+        TokenType = ETokenType::Blue;
+        ScoreValue = 50.f;
+    }
+    else if (RandomNumber >= 0.5f && RandomNumber < 0.7f)
+    {
+        // 20% yellow tokens
+        TokenType = ETokenType::Yellow;
+        ScoreValue = 50.f;
+    }
+    else if (RandomNumber >= 0.7f && RandomNumber < 0.9f)
+    {
+        // 20% green tokens
+        TokenType = ETokenType::Green;
+        ScoreValue = 50.f;
+    }
+    else
+    {
+        // 10% red tokens
+        TokenType = ETokenType::Red;
+        ScoreValue = 100.f;
+    }
+}
+
 // public functions
 AGameToken::AGameToken()
 {
@@ -28,9 +63,7 @@ AGameToken::AGameToken()
 
     // Set defaults
     bIsFallingDown = false;
-    ScoreValue = 25.f;
-    int32 RandomNumber = FMath::RandRange(Red, White);
-    TokenType = static_cast<ETokenType>(RandomNumber);
+    AssignTokenType();
 
     // Set up StaticMesh component
     RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));

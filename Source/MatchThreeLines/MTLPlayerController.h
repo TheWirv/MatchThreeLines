@@ -28,15 +28,26 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
     /** Remove the current menu widget and create a new one from the specified class, if provided. */
     void ChangeMenuWidget(const TSubclassOf<UUserWidget> NewWidgetClass);
 
+    /** Saves the player's progress, like their name and high score */
+    void SaveProfile();
+
+    void CheckSaveGameSuccess(const FString& SlotName, const int32 UserIndex, const bool bSuccess);
+
+    /** Loads the player's prior progress, like their name and high score */
+    void LoadProfile();
+
 public:
     AMTLPlayerController();
 
     /** Wait for a tiny bit, then display the End menu */
     void EndGame();
 
-    /** Hide the main/pause menu, display the in-game menu, then unpause the game */
+    /**
+     * Hide the main/pause menu, display the in-game menu, then unpause the game
+     * @param Resume Whether this is called to resume or start a new game; when starting afresh, the player's name is being saved
+     */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
-    void StartOrResumeGame();
+    void StartOrResumeGame(const bool Resume = false);
 
     /** Reset the playing field, score and remaining turns */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")

@@ -43,6 +43,9 @@ class MATCHTHREELINES_API AGameToken : public AActor
     /** Creates a dynamic material instance and assigns it to the Token's static mesh */
     void AssignMaterialInstanceToMesh();
 
+    /** Assigns the token a type and sets the score value based on that */
+    void AssignTokenType();
+
     /**
     * Gets the color for this token's material instance.
     * @returns This token's material instance color.

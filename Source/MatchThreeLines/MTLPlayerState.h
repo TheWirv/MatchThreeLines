@@ -9,6 +9,7 @@
 #include "MTLPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateScoreDelegate);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FUpdateRemainingTurnsDelegate);
 
 /**
@@ -52,6 +53,9 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
     FUpdateRemainingTurnsDelegate OnUpdateRemainingTurnsDelegate;
 
+    UFUNCTION(BlueprintCallable, DisplayName = "SetPlayerName", Category = "MTL – UI")
+    void BP_SetPlayerName(const FString& InPlayerName);
+
     bool IsSelecting() const;
 
     AGameToken* GetHoveredOverGameToken() const;
@@ -76,6 +80,8 @@ protected:
 
 // Getters
 FORCEINLINE int32 AMTLPlayerState::GetAmountOfRemainingTurns() const { return AmountOfRemainingTurns; };
+
+FORCEINLINE void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName) { SetPlayerName(InPlayerName); };
 
 FORCEINLINE bool AMTLPlayerState::IsSelecting() const { return bIsSelecting; }
 
