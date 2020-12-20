@@ -21,17 +21,11 @@ class MATCHTHREELINES_API AMTLGameMode : public AGameModeBase
 
 public:
     AMTLGameMode();
+    
+    // Getters
+    FORCEINLINE int32 GetMaxAmountOfTurns() const { return MaxAmountOfTurns; }
 
-    int32 GetMaxAmountOfTurns() const;
+    FORCEINLINE int32 GetAmountOfColumns() const { return AmountOfColumns; }
 
-    int32 GetAmountOfColumns() const;
-
-    int32 GetAmountOfRows() const;
+    FORCEINLINE int32 GetAmountOfRows() const { return AmountOfRows; }
 };
-
-// Getters
-FORCEINLINE int32 AMTLGameMode::GetMaxAmountOfTurns() const { return MaxAmountOfTurns; }
-
-FORCEINLINE int32 AMTLGameMode::GetAmountOfColumns() const { return AmountOfColumns; }
-
-FORCEINLINE int32 AMTLGameMode::GetAmountOfRows() const { return AmountOfRows; }

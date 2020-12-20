@@ -5,7 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 
-// private functions
+// Private functions
 void AMTLGameState::InitPlayingField()
 {
     const AMTLGameMode* GameMode = GetDefaultGameMode<AMTLGameMode>();
@@ -65,7 +65,15 @@ bool AMTLGameState::SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex
     return false;
 }
 
-// public functions
+// Protected functions
+void AMTLGameState::BeginPlay()
+{
+    Super::BeginPlay();
+
+    InitPlayingField();
+}
+
+// Public functions
 bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
 {
     TArray<FFallingGameToken> FallingGameTokens;
@@ -181,10 +189,7 @@ void AMTLGameState::ResetPlayingField()
     InitPlayingField();
 }
 
-// protected functions
-void AMTLGameState::BeginPlay()
+float AMTLGameState::GetHighScore() const
 {
-    Super::BeginPlay();
-
-    InitPlayingField();
+    return HighScore;
 }

@@ -9,7 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-// private functions
+// Private functions
 void AMTLPlayerController::OnMouseClicked()
 {
     AMTLPlayerState* MTLPlayerState = GetPlayerState<AMTLPlayerState>();
@@ -43,13 +43,13 @@ void AMTLPlayerController::OnMouseReleased()
     }
 }
 
-void AMTLPlayerController::PauseGame()
+void AMTLPlayerController::PauseAction()
 {
-    Pause();
-    ChangeMenuWidget(PauseMenuWidget);
+    PauseGame(true);
+    OnPlayFadeAnimationDelegate.Broadcast(true, PauseMenu);
 }
 
-void AMTLPlayerController::ChangeMenuWidget(const TSubclassOf<UUserWidget> NewWidgetClass)
+void AMTLPlayerController::ShowPauseHUD(const bool bShow)
 {
     if (CurrentWidget != nullptr)
     {
@@ -57,13 +57,24 @@ void AMTLPlayerController::ChangeMenuWidget(const TSubclassOf<UUserWidget> NewWi
         CurrentWidget = nullptr;
     }
 
-    if (NewWidgetClass != nullptr)
+    if (PauseHUDWidget == nullptr || MainHUDWidget == nullptr)
     {
-        CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), NewWidgetClass);
+        GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red,
+                                         TEXT("Didn't provide UI widgets for Pause HUD and/or main in-game HUD!"));
+    }
+    else
+    {
+        CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), bShow ? PauseHUDWidget : MainHUDWidget);
 
         if (CurrentWidget != nullptr)
         {
             CurrentWidget->AddToViewport();
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red,
+                                             FString("Couldn't create widget for the %s!").Append(
+                                                 bShow ? "Pause HUD" : "main in-game HUD"));
         }
     }
 }
@@ -83,7 +94,7 @@ void AMTLPlayerController::SaveProfile()
             {
                 UE_LOG(LogTemp, Log, TEXT("Successfully save the game for player `%s`"), *PlayerState->GetPlayerName());
             }
-            else 
+            else
             {
                 GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Failed to save the game!"));
             }
@@ -115,7 +126,25 @@ void AMTLPlayerController::LoadProfile()
     }
 }
 
-// public functions
+// Protected functions
+void AMTLPlayerController::SetupInputComponent()
+{
+    Super::SetupInputComponent();
+
+    InputComponent->BindAction("MouseClick", IE_Pressed, this, &AMTLPlayerController::OnMouseClicked);
+    InputComponent->BindAction("MouseClick", IE_Released, this, &AMTLPlayerController::OnMouseReleased);
+    InputComponent->BindAction("Pause", IE_Pressed, this, &AMTLPlayerController::PauseAction);
+}
+
+void AMTLPlayerController::BeginPlay()
+{
+    Super::BeginPlay();
+
+    LoadProfile();
+    PauseGame(true);
+}
+
+// Public functions
 AMTLPlayerController::AMTLPlayerController()
 {
     bShowMouseCursor = true;
@@ -128,15 +157,20 @@ void AMTLPlayerController::EndGame()
     FTimerHandle DelayTimerHandle;
     GetWorldTimerManager().SetTimer(DelayTimerHandle, [this]()
     {
-        Pause();
-        ChangeMenuWidget(EndMenuWidget);
+        PauseGame(true);
+        OnPlayFadeAnimationDelegate.Broadcast(true, EndMenu);
     }, 0.5f, false);
+}
+
+void AMTLPlayerController::PauseGame(const bool bPause)
+{
+    SetPause(bPause);
+    ShowPauseHUD(bPause);
 }
 
 void AMTLPlayerController::StartOrResumeGame()
 {
-    ChangeMenuWidget(InGameWidget);
-    SetPause(false);
+    OnPlayFadeAnimationDelegate.Broadcast(false, PauseMenu);
 }
 
 void AMTLPlayerController::ResetGame() const
@@ -159,25 +193,4 @@ void AMTLPlayerController::Quit()
 {
     SaveProfile();
     UKismetSystemLibrary::QuitGame(this, this, EQuitPreference::Quit, false);
-}
-
-// protected functions
-void AMTLPlayerController::SetupInputComponent()
-{
-    Super::SetupInputComponent();
-
-    InputComponent->BindAction("MouseClick", IE_Pressed, this, &AMTLPlayerController::OnMouseClicked);
-    InputComponent->BindAction("MouseClick", IE_Released, this, &AMTLPlayerController::OnMouseReleased);
-    InputComponent->BindAction("Pause", IE_Pressed, this, &AMTLPlayerController::PauseGame);
-}
-
-void AMTLPlayerController::BeginPlay()
-{
-    Super::BeginPlay();
-
-    Pause();
-
-    LoadProfile();
-
-    ChangeMenuWidget(MainMenuWidget);
 }

@@ -41,10 +41,23 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
     /** Decrements AmountOfRemainingTurns by 1, and ends the game if the result is 0 */
     void DecrementAmountOfRemainingTurns();
 
+protected:
+    virtual void BeginPlay() override;
+
 public:
+    /** Reset all members to default/initial values */
+    void Init();
+
+    /** Destroys all selected GameTokens, if more than three have been selected; then decrements AmountOfRemainingTurns */
+    void EndTurn();
+
+    // Getters, setters and property-related delegates
     /** Event dispatcher to let the UI know about changes regarding the player's score */
     UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
     FUpdateScoreDelegate OnUpdateScoreDelegate;
+
+    UFUNCTION(BlueprintCallable, DisplayName = "SetPlayerName", Category = "MTL – UI")
+    void BP_SetPlayerName(const FString& InPlayerName);
 
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     int32 GetAmountOfRemainingTurns() const;
@@ -53,46 +66,18 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
     FUpdateRemainingTurnsDelegate OnUpdateRemainingTurnsDelegate;
 
-    UFUNCTION(BlueprintCallable, DisplayName = "SetPlayerName", Category = "MTL – UI")
-    void BP_SetPlayerName(const FString& InPlayerName);
+    FORCEINLINE bool IsSelecting() const { return bIsSelecting; }
 
-    bool IsSelecting() const;
+    FORCEINLINE void SetIsSelecting(const bool bInIsSelecting) { bIsSelecting = bInIsSelecting; }
 
-    AGameToken* GetHoveredOverGameToken() const;
+    FORCEINLINE AGameToken* GetHoveredOverGameToken() const { return HoveredOverGameToken; }
 
-    TArray<AGameToken*> GetSelectedTokens() const;
+    FORCEINLINE void SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken)
+    {
+        HoveredOverGameToken = InHoveredOverGameToken;
+    }
 
-    void SetIsSelecting(const bool bInIsSelecting);
-
-    void SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken);
+    FORCEINLINE TArray<AGameToken*> GetSelectedTokens() const { return SelectedTokens; }
 
     void AddTokenToSelected(AGameToken* Token);
-
-    /** Reset all members to default/initial values */
-    void Init();
-
-    /** Destroys all selected GameTokens, if more than three have been selected; then decrements AmountOfRemainingTurns */
-    void EndTurn();
-
-protected:
-    virtual void BeginPlay() override;
 };
-
-// Getters
-FORCEINLINE int32 AMTLPlayerState::GetAmountOfRemainingTurns() const { return AmountOfRemainingTurns; };
-
-FORCEINLINE bool AMTLPlayerState::IsSelecting() const { return bIsSelecting; }
-
-FORCEINLINE AGameToken* AMTLPlayerState::GetHoveredOverGameToken() const { return HoveredOverGameToken; }
-
-FORCEINLINE TArray<AGameToken*> AMTLPlayerState::GetSelectedTokens() const { return SelectedTokens; }
-
-// Setters
-FORCEINLINE void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName) { SetPlayerName(InPlayerName); };
-
-FORCEINLINE void AMTLPlayerState::SetIsSelecting(const bool bInIsSelecting) { bIsSelecting = bInIsSelecting; }
-
-FORCEINLINE void AMTLPlayerState::SetHoveredOverGameToken(AGameToken* InHoveredOverGameToken)
-{
-    HoveredOverGameToken = InHoveredOverGameToken;
-}

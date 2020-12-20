@@ -8,6 +8,16 @@
 
 #include "MTLPlayerController.generated.h"
 
+UENUM(BlueprintType, Category = "MTL – UI")
+enum EPauseWidgetContentToShow
+{
+    PauseMenu,
+    EndMenu
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayFadeAnimationDelegate, bool, bFadeIn, EPauseWidgetContentToShow,
+                                             PauseWidgetContentToShow);
+
 /**
  * Custom PlayerController
  */
@@ -16,17 +26,32 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
 {
     GENERATED_BODY()
 
+    /** The Pause HUD widget */
+    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
+    TSubclassOf<UUserWidget> PauseHUDWidget;
+
+    /** The main in-game HUD widget */
+    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
+    TSubclassOf<UUserWidget> MainHUDWidget;
+
+    UPROPERTY()
+    UUserWidget* CurrentWidget;
+
     /** MouseDown event */
     void OnMouseClicked();
 
     /** MouseUp event */
     void OnMouseReleased();
 
-    /** Pause the game and display the Pause menu */
-    void PauseGame();
+    /** Action to be bound to Esc key */
+    void PauseAction();
 
-    /** Remove the current menu widget and create a new one from the specified class, if provided. */
-    void ChangeMenuWidget(const TSubclassOf<UUserWidget> NewWidgetClass);
+    /**
+     * Either hides the in-game menu and shows the Pause HUD, or the other way round
+     * @param bShow Whether to show the Pause HUD, and thus hiding the in-game menu;
+     *              or hide the Pause HUD, which displays the in-game menu
+     */
+    void ShowPauseHUD(const bool bShow = true);
 
     /** Saves the player's progress, like their name and high score */
     void SaveProfile();
@@ -34,11 +59,25 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
     /** Loads the player's prior progress, like their name and high score */
     void LoadProfile();
 
+protected:
+    /** Called when the game starts. */
+    virtual void BeginPlay() override;
+
+    /** Called to bind functionality to input. */
+    virtual void SetupInputComponent() override;
+
 public:
     AMTLPlayerController();
 
     /** Wait for a tiny bit, then display the End menu */
     void EndGame();
+
+    /**
+     * Pauses the game and displays the Pause HUD, or unpauses and shows main in-game HUD
+     * @param bPause Whether to pause or unpause
+     */
+    UFUNCTION(BlueprintCallable, Category = "MTL – PlayerController")
+    void PauseGame(const bool bPause);
 
     /** Hide the main/pause menu, display the in-game menu, then unpause the game */
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
@@ -52,30 +91,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     void Quit();
 
-protected:
-    /** Called when the game starts. */
-    virtual void BeginPlay() override;
-
-    /** Called to bind functionality to input */
-    virtual void SetupInputComponent() override;
-
-    /** The main menu widget */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
-    TSubclassOf<UUserWidget> MainMenuWidget;
-
-    /** The in-game menu widget */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
-    TSubclassOf<UUserWidget> InGameWidget;
-
-    /** The Pause menu widget */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
-    TSubclassOf<UUserWidget> PauseMenuWidget;
-
-    /** The End menu */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
-    TSubclassOf<UUserWidget> EndMenuWidget;
-
-    /** The currently displayed UMG widget */
-    UPROPERTY()
-    UUserWidget* CurrentWidget;
+    /** Event dispatcher to let the UI know that it should play a fade in/out animation on the Pause HUD */
+    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    FPlayFadeAnimationDelegate OnPlayFadeAnimationDelegate;
 };

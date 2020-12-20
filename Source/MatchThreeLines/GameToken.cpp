@@ -4,7 +4,7 @@
 #include "MTLPlayerState.h"
 #include "MTLGameMode.h"
 
-// private functions
+// Private functions
 void AGameToken::AssignMaterialInstanceToMesh()
 {
     if (Material != nullptr)
@@ -55,10 +55,50 @@ void AGameToken::AssignTokenType()
     }
 }
 
-// public functions
+// Protected functions
+void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
+{
+    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
+
+    if (PlayerState != nullptr)
+    {
+        PlayerState->SetHoveredOverGameToken(this);
+        if (PlayerState->IsSelecting())
+        {
+            PlayerState->AddTokenToSelected(this);
+        }
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
+    }
+}
+
+void AGameToken::OnEndMouseOver(AActor* TouchedActor)
+{
+    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
+
+    if (PlayerState != nullptr)
+    {
+        PlayerState->SetHoveredOverGameToken(nullptr);
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
+    }
+}
+
+void AGameToken::BeginPlay()
+{
+    Super::BeginPlay();
+
+    AssignMaterialInstanceToMesh();
+}
+
+// Public functions
 AGameToken::AGameToken()
 {
-    // Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+    // Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
     // Set defaults
@@ -140,49 +180,7 @@ void AGameToken::MarkSelected(const bool bIsSelected)
     MaterialInstance->SetScalarParameterValue("IsSelected", bIsSelected ? 1 : 0);
 }
 
-// protected functions
-void AGameToken::OnBeginMouseOver(AActor* TouchedActor)
-{
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->SetHoveredOverGameToken(this);
-        if (PlayerState->IsSelecting())
-        {
-            PlayerState->AddTokenToSelected(this);
-        }
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
-void AGameToken::OnEndMouseOver(AActor* TouchedActor)
-{
-    AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
-
-    if (PlayerState != nullptr)
-    {
-        PlayerState->SetHoveredOverGameToken(nullptr);
-    }
-    else
-    {
-        GEngine->AddOnScreenDebugMessage(1, 1.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
-    }
-}
-
-// Called when the game starts or when spawned
-void AGameToken::BeginPlay()
-{
-    Super::BeginPlay();
-
-    AssignMaterialInstanceToMesh();
-}
-
-// Called every frame
-void AGameToken::Tick(float DeltaTime)
+void AGameToken::Tick(const float DeltaTime)
 {
     Super::Tick(DeltaTime);
 

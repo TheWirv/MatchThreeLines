@@ -6,7 +6,7 @@
 #include "MTLGameState.h"
 #include "MTLGameMode.h"
 
-// private fuctions
+// Private fuctions
 void AMTLPlayerState::IncreaseScore()
 {
     // Since all selected Tokens must be of the same type, the first item suffices for this use case
@@ -46,42 +46,15 @@ void AMTLPlayerState::DecrementAmountOfRemainingTurns()
     }
 }
 
-// public functions
-void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
+// Protected functions
+void AMTLPlayerState::BeginPlay()
 {
-    if (SelectedTokens.Num() > 0)
-    {
-        // If the array already has some Tokens in it, check whether this one has already been added
-        if (!SelectedTokens.Contains(Token))
-        {
-            const AGameToken* LastToken = Cast<AGameToken>(SelectedTokens.Last());
-            if (Token->IsNeighbor(LastToken) && Token->IsOfSameType(LastToken))
-            {
-                // If the Token has not been added yet, and is a neighbor to and of the same type
-                // as the last selected token, it can be selected
-                Token->MarkSelected(true);
-                SelectedTokens.Add(Token);
-            }
-        }
-        else
-        {
-            // If this token has already been added, get its index and resize the array to index + 1 
-            const int32 IndexInSelected = SelectedTokens.IndexOfByKey(Token);
-            for (int32 i = IndexInSelected + 1; i < SelectedTokens.Num(); i++)
-            {
-                SelectedTokens[i]->MarkSelected(false);
-            }
-            SelectedTokens.SetNum(IndexInSelected + 1);
-        }
-    }
-    else
-    {
-        // If the array is empty, just add this Token
-        Token->MarkSelected(true);
-        SelectedTokens.Add(Token);
-    }
+    Super::BeginPlay();
+
+    Init();
 }
 
+// Public functions
 void AMTLPlayerState::Init()
 {
     AGameStateBase* GameStateBase = GetWorld()->GetGameState();
@@ -138,9 +111,47 @@ void AMTLPlayerState::EndTurn()
     SelectedTokens.Empty();
 }
 
-void AMTLPlayerState::BeginPlay()
+void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName)
 {
-    Super::BeginPlay();
+    SetPlayerName(InPlayerName);
+}
 
-    Init();
+int32 AMTLPlayerState::GetAmountOfRemainingTurns() const
+{
+    return AmountOfRemainingTurns;
+}
+
+void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)
+{
+    if (SelectedTokens.Num() > 0)
+    {
+        // If the array already has some Tokens in it, check whether this one has already been added
+        if (!SelectedTokens.Contains(Token))
+        {
+            const AGameToken* LastToken = Cast<AGameToken>(SelectedTokens.Last());
+            if (Token->IsNeighbor(LastToken) && Token->IsOfSameType(LastToken))
+            {
+                // If the Token has not been added yet, and is a neighbor to and of the same type
+                // as the last selected token, it can be selected
+                Token->MarkSelected(true);
+                SelectedTokens.Add(Token);
+            }
+        }
+        else
+        {
+            // If this token has already been added, get its index and resize the array to index + 1 
+            const int32 IndexInSelected = SelectedTokens.IndexOfByKey(Token);
+            for (int32 i = IndexInSelected + 1; i < SelectedTokens.Num(); i++)
+            {
+                SelectedTokens[i]->MarkSelected(false);
+            }
+            SelectedTokens.SetNum(IndexInSelected + 1);
+        }
+    }
+    else
+    {
+        // If the array is empty, just add this Token
+        Token->MarkSelected(true);
+        SelectedTokens.Add(Token);
+    }
 }

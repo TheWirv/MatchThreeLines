@@ -32,13 +32,11 @@ class MATCHTHREELINES_API AGameToken : public AActor
 {
     GENERATED_BODY()
 
-    bool bIsFallingDown;
-
-    float LocationZ;
-    
     FIntPoint Index;
-    float ScoreValue;
+    float LocationZ;
     ETokenType TokenType;
+    float ScoreValue;
+    bool bIsFallingDown;
 
     /** Creates a dynamic material instance and assigns it to the Token's static mesh */
     void AssignMaterialInstanceToMesh();
@@ -48,7 +46,7 @@ class MATCHTHREELINES_API AGameToken : public AActor
 
     /**
     * Gets the color for this token's material instance.
-    * @returns This token's material instance color.
+    * @returns This token's material instance color
     */
     FColor GetMaterialInstanceColor() const
     {
@@ -66,6 +64,16 @@ class MATCHTHREELINES_API AGameToken : public AActor
             return FColor::White;
         }
     }
+
+protected:
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+
+    UFUNCTION()
+    void OnBeginMouseOver(AActor* TouchedActor);
+
+    UFUNCTION()
+    void OnEndMouseOver(AActor* TouchedActor);
 
 public:
     AGameToken();
@@ -88,55 +96,25 @@ public:
     /** Sets the MaterialInstance's "IsSelected" parameter to mark this token as selected */
     void MarkSelected(const bool bIsSelected);
 
-    float GetLocationZ() const;
+    // Overrides
+    virtual void Tick(const float DeltaTime) override;
 
-    FIntPoint GetIndex() const;
+    // Getters, setters, and property-related delegates
+    FORCEINLINE FIntPoint GetIndex() const { return Index; };
 
-    float GetScoreValue() const;
+    FORCEINLINE void SetIndex(const FIntPoint InIndex) { Index = InIndex; };
 
-    void SetIsFallingDown(const bool bInIsFallingDown);
+    FORCEINLINE float GetLocationZ() const { return LocationZ; };
 
-    void SetLocationZ(const float InLocationZ);
+    FORCEINLINE void SetLocationZ(const float InLocationZ) { LocationZ = InLocationZ; };
 
-    void SetIndex(const FIntPoint InIndex);
+    FORCEINLINE float GetScoreValue() const { return ScoreValue; };
 
-    bool IsOfSameType(const AGameToken* OtherToken) const;
+    FORCEINLINE void SetIsFallingDown(const bool bInIsFallingDown) { bIsFallingDown = bInIsFallingDown; };
 
-    bool operator==(const AGameToken* OtherToken) const;
+    // Other inline functions
+    FORCEINLINE bool IsOfSameType(const AGameToken* OtherToken) const { return TokenType == OtherToken->TokenType; };
 
-protected:
-    // Called when the game starts or when spawned
-    virtual void BeginPlay() override;
-
-    UFUNCTION()
-    void OnBeginMouseOver(AActor* TouchedActor);
-
-    UFUNCTION()
-    void OnEndMouseOver(AActor* TouchedActor);
-
-public:
-    // Called every frame
-    virtual void Tick(float DeltaTime) override;
+    // Operators
+    FORCEINLINE bool operator==(const AGameToken* OtherToken) const { return Index == OtherToken->Index; }
 };
-
-// Getters
-FORCEINLINE float AGameToken::GetLocationZ() const { return LocationZ; };
-
-FORCEINLINE FIntPoint AGameToken::GetIndex() const { return Index; };
-
-FORCEINLINE float AGameToken::GetScoreValue() const { return ScoreValue; };
-
-// Setters
-FORCEINLINE void AGameToken::SetIsFallingDown(const bool bInIsFallingDown) { bIsFallingDown = bInIsFallingDown; };
-
-FORCEINLINE void AGameToken::SetLocationZ(const float InLocationZ) { LocationZ = InLocationZ; };
-
-FORCEINLINE void AGameToken::SetIndex(const FIntPoint InIndex) { Index = InIndex; };
-
-// Other inline functions
-FORCEINLINE bool AGameToken::IsOfSameType(const AGameToken* OtherToken) const
-{
-    return TokenType == OtherToken->TokenType;
-};
-
-FORCEINLINE bool AGameToken::operator==(const AGameToken* OtherToken) const { return Index == OtherToken->Index; }

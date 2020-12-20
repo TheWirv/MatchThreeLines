@@ -67,6 +67,9 @@ class MATCHTHREELINES_API AMTLGameState : public AGameStateBase
      */
     bool SpawnGameToken(const int32 ColumnIndex, const int32 RowIndex, const bool bSpawnOutsideViewport = false);
 
+protected:
+    virtual void BeginPlay() override;
+
 public:
     /**
      * Destroys passed SelectedTokens, removes them from the PlayingField and respawns new ones at the top to fill up the grid again
@@ -76,17 +79,10 @@ public:
 
     void ResetPlayingField();
 
-    void SetHighScore(const float InHighScore);
-
+    // Getters
     UFUNCTION(BlueprintCallable, Category = "MTL – UI")
     float GetHighScore() const;
 
-protected:
-    virtual void BeginPlay() override;
+    // Setters
+    FORCEINLINE void SetHighScore(const float InHighScore) { HighScore = InHighScore; };
 };
-
-// Getters
-FORCEINLINE float AMTLGameState::GetHighScore() const { return HighScore; };
-
-// Setters
-FORCEINLINE void AMTLGameState::SetHighScore(const float InHighScore) { HighScore = InHighScore; };
