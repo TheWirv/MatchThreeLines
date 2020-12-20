@@ -16,10 +16,10 @@ There is a game field consisting of hex fields containing blocks. The player nee
 ## Ideas for more features, expansions..
 
 - [X] ~~Score (+ UI)~~
-- [X] Varying probabilities for the different token types (the rarer, the more points it's worth)
+- [X] ~~Varying probabilities for the different token types (the rarer, the more points it's worth)~~
 - [X] ~~Game ends after x moves~~
 - [X] ~~Possibility to restart the game after ending of game~~
-- [X] Saved player name and high score
+- [X] ~~Saved player name and high score~~
 - [ ] High score table
 - [ ] Background music
 - [ ] Options screen that enables customization of grid size, max amount of turns, and min required selected tokens
