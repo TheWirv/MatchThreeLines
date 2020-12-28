@@ -26,6 +26,7 @@ class MATCHTHREELINES_API AMTLPlayerState : public APlayerState
 
     int32 AmountOfRemainingTurns;
     bool bIsSelecting;
+    int32 CurrentRank;
 
     /** The GameToken that the player is currently hovering over with their mouse cursor */
     UPROPERTY()
@@ -53,22 +54,27 @@ public:
 
     // Getters, setters and property-related delegates
     /** Event dispatcher to let the UI know about changes regarding the player's score */
-    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    UPROPERTY(BlueprintAssignable, Category = "MTL|UI")
     FUpdateScoreDelegate OnUpdateScoreDelegate;
 
-    UFUNCTION(BlueprintCallable, DisplayName = "SetPlayerName", Category = "MTL – UI")
+    UFUNCTION(BlueprintCallable, DisplayName = "SetPlayerName", Category = "MTL|UI")
     void BP_SetPlayerName(const FString& InPlayerName);
 
-    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
     int32 GetAmountOfRemainingTurns() const;
 
     /** Event dispatcher to let the UI know about changes regarding AmountOfRemainingTurns */
-    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    UPROPERTY(BlueprintAssignable, Category = "MTL|UI")
     FUpdateRemainingTurnsDelegate OnUpdateRemainingTurnsDelegate;
 
     FORCEINLINE bool IsSelecting() const { return bIsSelecting; }
 
     FORCEINLINE void SetIsSelecting(const bool bInIsSelecting) { bIsSelecting = bInIsSelecting; }
+
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
+    int32 GetCurrentRank() const;
+
+    FORCEINLINE void SetCurrentRank(const int32 InRank) { CurrentRank = InRank; }
 
     FORCEINLINE AGameToken* GetHoveredOverGameToken() const { return HoveredOverGameToken; }
 

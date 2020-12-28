@@ -20,14 +20,11 @@ There is a game field consisting of hex fields containing blocks. The player nee
 - [X] ~~Game ends after x moves~~
 - [X] ~~Possibility to restart the game after ending of game~~
 - [X] ~~Saved player name and high score~~
-- [ ] High score table
+- [X] ~~High score table~~
 - [ ] Background music
 - [ ] Options screen that enables customization of grid size, max amount of turns, and min required selected tokens
 - [ ] Info screen that explains the gameplay, the inputs, and the different token types
 - [ ] Exception Handling
-- [ ] Special tokens with special effects
-- [ ] Combos
-- [ ] …
 
 ## Conditions
 

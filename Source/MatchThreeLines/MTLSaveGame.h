@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/SaveGame.h"
+#include "MTLGameState.h"
 #include "MTLSaveGame.generated.h"
 
 #define DEFAULT_SAVE_SLOT_NAME "Profile"
@@ -19,15 +20,18 @@ class MATCHTHREELINES_API UMTLSaveGame : public USaveGame
 public:
     UMTLSaveGame();
 
-    UPROPERTY(VisibleAnywhere, Category = "MTL – Saves")
+    UPROPERTY(VisibleAnywhere, Category = "MTL|Saves")
     float HighScore;
 
-    UPROPERTY(VisibleAnywhere, Category = "MTL – Saves")
+    UPROPERTY(VisibleAnywhere, Category = "MTL|Saves")
+    TArray<FHighScoreEntry> HighScores;
+
+    UPROPERTY(VisibleAnywhere, Category = "MTL|Saves")
     FString PlayerName;
 
-    UPROPERTY(VisibleAnywhere, Category = "MTL – Saves")
+    UPROPERTY(VisibleAnywhere, Category = "MTL|Saves")
     FString SaveSlotName;
 
-    UPROPERTY(VisibleAnywhere, Category = "MTL – Saves")
+    UPROPERTY(VisibleAnywhere, Category = "MTL|Saves")
     uint32 UserIndex;
 };

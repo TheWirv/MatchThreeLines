@@ -2,6 +2,7 @@
 
 #include "MTLGameState.h"
 #include "MTLGameMode.h"
+#include "MTLPlayerState.h"
 
 #include "Kismet/GameplayStatics.h"
 
@@ -74,6 +75,11 @@ void AMTLGameState::BeginPlay()
 }
 
 // Public functions
+AMTLGameState::AMTLGameState()
+{
+    HighScores.Init(FHighScoreEntry(), 5);
+}
+
 bool AMTLGameState::DestroyTokens(TArray<AGameToken*> SelectedTokens)
 {
     TArray<FFallingGameToken> FallingGameTokens;
@@ -189,7 +195,37 @@ void AMTLGameState::ResetPlayingField()
     InitPlayingField();
 }
 
-float AMTLGameState::GetHighScore() const
+TArray<FHighScoreEntry> AMTLGameState::GetHighScores() const
 {
-    return HighScore;
+    return HighScores;
+}
+
+int32 AMTLGameState::AddHighScore(const float InHighScore)
+{
+    const int32 AmountOfTurns = GetDefaultGameMode<AMTLGameMode>()->GetMaxAmountOfTurns();
+    const float AveragedScore = InHighScore / AmountOfTurns;
+    if (AveragedScore > HighScores[4].AveragedScore)
+    {
+        const AMTLPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AMTLPlayerState>();
+        if (PlayerState != nullptr)
+        {
+            int32 Index = 0;
+            for (; Index < HighScores.Num(); Index++)
+            {
+                if (HighScores[Index].AveragedScore <= AveragedScore)
+                {
+                    break;
+                }
+            }
+            HighScores.Insert(FHighScoreEntry(PlayerState->GetPlayerName(), InHighScore, AmountOfTurns), Index);
+            HighScores.SetNum(5);
+            return Index + 1;
+        }
+        else
+        {
+            GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Couldn't get PlayerState!"));
+        }
+    }
+
+    return -1;
 }

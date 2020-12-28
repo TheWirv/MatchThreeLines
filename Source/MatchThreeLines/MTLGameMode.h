@@ -22,8 +22,9 @@ class MATCHTHREELINES_API AMTLGameMode : public AGameModeBase
 public:
     AMTLGameMode();
     
-    // Getters
-    FORCEINLINE int32 GetMaxAmountOfTurns() const { return MaxAmountOfTurns; }
+    // Getters, setters and property-related delegates
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
+    int32 GetMaxAmountOfTurns() const;
 
     FORCEINLINE int32 GetAmountOfColumns() const { return AmountOfColumns; }
 

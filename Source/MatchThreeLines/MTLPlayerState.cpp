@@ -28,16 +28,7 @@ void AMTLPlayerState::DecrementAmountOfRemainingTurns()
         AMTLPlayerController* PlayerController = GetWorld()->GetFirstPlayerController<AMTLPlayerController>();
         if (PlayerController != nullptr)
         {
-            AMTLGameState* GameState = GetWorld()->GetGameState<AMTLGameState>();
-            if (GameState != nullptr)
-            {
-                GameState->SetHighScore(FMath::Max(GetScore(), GameState->GetHighScore()));
-                PlayerController->EndGame();
-            }
-            else
-            {
-                GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Couldn't get GameState!"));
-            }
+            PlayerController->EndGame();
         }
         else
         {
@@ -119,6 +110,11 @@ void AMTLPlayerState::BP_SetPlayerName(const FString& InPlayerName)
 int32 AMTLPlayerState::GetAmountOfRemainingTurns() const
 {
     return AmountOfRemainingTurns;
+}
+
+int32 AMTLPlayerState::GetCurrentRank() const
+{
+    return CurrentRank;
 }
 
 void AMTLPlayerState::AddTokenToSelected(AGameToken* Token)

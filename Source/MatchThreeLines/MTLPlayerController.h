@@ -8,7 +8,7 @@
 
 #include "MTLPlayerController.generated.h"
 
-UENUM(BlueprintType, Category = "MTL – UI")
+UENUM(BlueprintType, Category = "MTL|UI")
 enum EPauseWidgetContentToShow
 {
     PauseMenu,
@@ -27,11 +27,11 @@ class MATCHTHREELINES_API AMTLPlayerController : public APlayerController
     GENERATED_BODY()
 
     /** The Pause HUD widget */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
+    UPROPERTY(EditDefaultsOnly, Category = "MTL|UI")
     TSubclassOf<UUserWidget> PauseHUDWidget;
 
     /** The main in-game HUD widget */
-    UPROPERTY(EditDefaultsOnly, Category = "MTL – UI")
+    UPROPERTY(EditDefaultsOnly, Category = "MTL|UI")
     TSubclassOf<UUserWidget> MainHUDWidget;
 
     UPROPERTY()
@@ -76,22 +76,22 @@ public:
      * Pauses the game and displays the Pause HUD, or unpauses and shows main in-game HUD
      * @param bPause Whether to pause or unpause
      */
-    UFUNCTION(BlueprintCallable, Category = "MTL – PlayerController")
+    UFUNCTION(BlueprintCallable, Category = "MTL|PlayerController")
     void PauseGame(const bool bPause);
 
     /** Hide the main/pause menu, display the in-game menu, then unpause the game */
-    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
     void StartOrResumeGame();
 
     /** Reset the playing field, score and remaining turns */
-    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
     void ResetGame() const;
 
     /** Quit the game, after having saved the profile */
-    UFUNCTION(BlueprintCallable, Category = "MTL – UI")
+    UFUNCTION(BlueprintCallable, Category = "MTL|UI")
     void Quit();
 
     /** Event dispatcher to let the UI know that it should play a fade in/out animation on the Pause HUD */
-    UPROPERTY(BlueprintAssignable, Category = "MTL – UI")
+    UPROPERTY(BlueprintAssignable, Category = "MTL|UI")
     FPlayFadeAnimationDelegate OnPlayFadeAnimationDelegate;
 };

@@ -45,8 +45,15 @@ void AMTLPlayerController::OnMouseReleased()
 
 void AMTLPlayerController::PauseAction()
 {
-    PauseGame(true);
-    OnPlayFadeAnimationDelegate.Broadcast(true, PauseMenu);
+    if (IsPaused())
+    {
+        OnPlayFadeAnimationDelegate.Broadcast(false, PauseMenu);
+    }
+    else
+    {
+        PauseGame(true);
+        OnPlayFadeAnimationDelegate.Broadcast(true, PauseMenu);
+    }
 }
 
 void AMTLPlayerController::ShowPauseHUD(const bool bShow)
@@ -88,11 +95,12 @@ void AMTLPlayerController::SaveProfile()
         if (GameState != nullptr)
         {
             SaveGameInstance->PlayerName = PlayerState->GetPlayerName();
-            SaveGameInstance->HighScore = GameState->GetHighScore();
+            SaveGameInstance->HighScores = GameState->GetHighScores();
 
             if (UGameplayStatics::SaveGameToSlot(SaveGameInstance, DEFAULT_SAVE_SLOT_NAME, SaveGameInstance->UserIndex))
             {
-                UE_LOG(LogTemp, Log, TEXT("Successfully save the game for player `%s`"), *PlayerState->GetPlayerName());
+                UE_LOG(LogTemp, Log, TEXT("Successfully saved the game for player `%s`"),
+                       *PlayerState->GetPlayerName());
             }
             else
             {
@@ -116,7 +124,14 @@ void AMTLPlayerController::LoadProfile()
         if (GameState != nullptr)
         {
             PlayerState->SetPlayerName(LoadedProfile->PlayerName);
-            GameState->SetHighScore(LoadedProfile->HighScore);
+            if (LoadedProfile->HighScores[0].Score > 0)
+            {
+                GameState->SetHighScores(LoadedProfile->HighScores);
+            }
+            else if (LoadedProfile->HighScore > 0)
+            {
+                GameState->AddHighScore(LoadedProfile->HighScore);
+            }
             UE_LOG(LogTemp, Log, TEXT("Loaded profile for Player `%s`"), *LoadedProfile->PlayerName);
         }
         else
@@ -133,7 +148,9 @@ void AMTLPlayerController::SetupInputComponent()
 
     InputComponent->BindAction("MouseClick", IE_Pressed, this, &AMTLPlayerController::OnMouseClicked);
     InputComponent->BindAction("MouseClick", IE_Released, this, &AMTLPlayerController::OnMouseReleased);
-    InputComponent->BindAction("Pause", IE_Pressed, this, &AMTLPlayerController::PauseAction);
+    FInputActionBinding& PauseActionBinding = InputComponent->BindAction(
+        "Pause", IE_Pressed, this, &AMTLPlayerController::PauseAction);
+    PauseActionBinding.bExecuteWhenPaused = true;
 }
 
 void AMTLPlayerController::BeginPlay()
@@ -154,12 +171,23 @@ AMTLPlayerController::AMTLPlayerController()
 
 void AMTLPlayerController::EndGame()
 {
-    FTimerHandle DelayTimerHandle;
-    GetWorldTimerManager().SetTimer(DelayTimerHandle, [this]()
+    AMTLGameState* GameState = GetWorld()->GetGameState<AMTLGameState>();
+    AMTLPlayerState* MTLPlayerState = GetPlayerState<AMTLPlayerState>();
+
+    if (GameState != nullptr && MTLPlayerState != nullptr)
     {
-        PauseGame(true);
-        OnPlayFadeAnimationDelegate.Broadcast(true, EndMenu);
-    }, 0.5f, false);
+        MTLPlayerState->SetCurrentRank(GameState->AddHighScore(PlayerState->GetScore()));
+        FTimerHandle DelayTimerHandle;
+        GetWorldTimerManager().SetTimer(DelayTimerHandle, [this]()
+        {
+            PauseGame(true);
+            OnPlayFadeAnimationDelegate.Broadcast(true, EndMenu);
+        }, 0.5f, false);
+    }
+    else
+    {
+        GEngine->AddOnScreenDebugMessage(1, 2.f, FColor::Red, TEXT("Couldn't get GameState or PlayerState!"));
+    }
 }
 
 void AMTLPlayerController::PauseGame(const bool bPause)
